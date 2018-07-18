@@ -1,0 +1,86 @@
+{
+  "description": "Presto Image",
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "ami_name": "presto-{{isotime | clean_ami_name}}",
+      "availability_zone": "{{user `aws_az`}}",
+      "iam_instance_profile": "packer",
+      "instance_type": "t2.micro",
+      "region": "{{user `aws_region`}}",
+      "run_tags": {
+        "role": "packer"
+      },
+      "source_ami_filter": {
+        "filters": {
+          "virtualization-type": "hvm",
+          "name": "*ubuntu-xenial-16.04-amd64-server-*",
+          "root-device-type": "ebs"
+        },
+        "owners": ["099720109477"],
+        "most_recent": true
+      },
+      "ssh_timeout": "10m",
+      "ssh_username": "ubuntu",
+      "tags": {
+        "ImageType": "presto-packer-image"
+      },
+      "spot_price_auto_product": "Linux/UNIX (Amazon VPC)",
+      "spot_price": "auto"
+    },
+    {
+      "type": "azure-arm",
+
+      "client_id": "{{user `azure_client_id`}}",
+      "client_secret": "{{user `azure_client_secret`}}",
+      "tenant_id": "{{user `azure_tenant_id`}}",
+      "subscription_id": "{{user `azure_subscription_id`}}",
+
+      "managed_image_resource_group_name": "{{user `azure_resource_group_name`}}",
+      "managed_image_name": "presto-{{isotime \"2006-01-02T030405\"}}",
+
+      "os_type": "Linux",
+      "image_publisher": "Canonical",
+      "image_offer": "UbuntuServer",
+      "image_sku": "16.04-LTS",
+
+      "location": "{{user `azure_location`}}",
+      "vm_size": "Standard_DS2_v2"
+    },
+    {
+      "type": "googlecompute",
+      "account_file": "{{user `gcp_account_file`}}",
+      "project_id": "{{user `gcp_project_id`}}",
+      "source_image_family": "ubuntu-1604-lts",
+      "zone": "{{user `gcp_zone`}}",
+      "image_family": "presto",
+      "image_name": "presto-{{isotime \"20060102t030405\"}}",
+      "preemptible": true,
+      "ssh_username": "ubuntu"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "update-machine.sh",
+      "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
+    },
+    {
+      "type": "shell",
+      "script": "install-java10.sh",
+      "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
+    },
+    {
+      "type": "shell",
+      "script": "install-presto.sh",
+      "environment_vars": [ "PRESTO_VERSION={{user `presto_version`}}" ],
+      "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
+    },
+    {
+      "type": "shell",
+      "script": "install-presto-cli.sh",
+      "environment_vars": [ "PRESTO_VERSION={{user `presto_version`}}" ],
+      "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
+    }
+  ]
+}
