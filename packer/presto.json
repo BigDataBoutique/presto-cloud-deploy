@@ -67,7 +67,7 @@
     },
     {
       "type": "shell",
-      "script": "install-java10.sh",
+      "script": "install-java8.sh",
       "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
     },
     {

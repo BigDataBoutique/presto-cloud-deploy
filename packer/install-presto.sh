@@ -15,7 +15,7 @@ export pid_file="/var/run/presto/presto.pid"
 export user_presto='presto'
 
 log "Downloading Presto ${version_presto}..."
-wget -O ${path_file} "https://repo1.maven.org/maven2/com/facebook/presto/presto-server/${version_presto}/presto-server-${version_presto}.tar.gz"
+wget -q -O ${path_file} "https://repo1.maven.org/maven2/com/facebook/presto/presto-server/${version_presto}/presto-server-${version_presto}.tar.gz"
 
 log "Installing Presto ${version_presto}..."
 useradd ${user_presto} || log "User [${user_presto}] already exists. Continuing..."

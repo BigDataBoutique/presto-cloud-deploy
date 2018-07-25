@@ -14,5 +14,5 @@
   "gcp_account_file": ".gcp_account.json",
 
   "azure_location": "East US",
-  "azure_resource_group_name": "packer-presto-images",
+  "azure_resource_group_name": "packer-presto-images"
 }
