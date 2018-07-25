@@ -20,6 +20,7 @@ data "aws_ami" "presto" {
 
 resource "aws_security_group" "presto" {
   name = "presto-${var.environment_name}-clients-security-group"
+  description = "Presto access"
   vpc_id = "${var.vpc_id}"
 
   tags {
@@ -27,11 +28,19 @@ resource "aws_security_group" "presto" {
     environment = "${var.environment_name}"
   }
 
+  # All Presto communications are done via HTTP
   ingress {
-    from_port         = 8080
-    to_port           = 8080
+    from_port         = "${var.http_port}"
+    to_port           = "${var.http_port}"
     protocol          = "tcp"
-    cidr_blocks       = ["0.0.0.0/0"]
+    cidr_blocks       = ["0.0.0.0/0"] // TODO internal only
+  }
+
+  # JMX
+  ingress {
+    from_port         = 33381
+    to_port           = 33381
+    protocol          = "tcp"
   }
 
   # ssh access from everywhere

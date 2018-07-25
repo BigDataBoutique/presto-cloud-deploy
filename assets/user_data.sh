@@ -3,6 +3,11 @@ set -e
 
 exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 
+cat <<'EOF' >>/etc/security/limits.conf
+presto soft soft nofile 16384
+presto hard soft nofile 16384
+EOF
+
 /usr/bin/printf "
 node.environment=${environment_name}
 node.id=$(hostname)
@@ -13,7 +18,7 @@ node.data-dir=/var/lib/presto/
 -XX:+PrintGC
 -XX:+PrintGCDateStamps
 -XX:MaxRAM=15500m
--Xmx16G
+-Xmx${heap_size}G
 -XX:+UseG1GC
 -XX:G1HeapRegionSize=32M
 -XX:+UseGCOverheadLimit
@@ -38,7 +43,9 @@ if [[ "${mode_presto}" == "coordinator" ]]; then
 coordinator=true
 node-scheduler.include-coordinator=false
 http-server.http.port=${http_port}
-query.max-memory-per-node=2GB
+# query.max-memory-per-node has to be <= query.max-total-memory-per-node
+query.max-memory-per-node=${memory_size}GB
+query.max-total-memory-per-node=${total_memory_size}GB
 node-scheduler.max-splits-per-node=48
 task.max-partial-aggregation-memory=64MB
 query.schedule-split-batch-size=30000
@@ -59,7 +66,9 @@ if [[ "${mode_presto}" == "worker" ]]; then
 #
 coordinator=false
 http-server.http.port=${http_port}
-query.max-memory-per-node=8GB
+query.max-memory-per-node=${memory_size}GB
+query.max-total-memory-per-node=${total_memory_size}GB
+memory.heap-headroom-per-node=8GB
 node-scheduler.max-splits-per-node=48
 task.max-partial-aggregation-memory=64MB
 query.schedule-split-batch-size=30000

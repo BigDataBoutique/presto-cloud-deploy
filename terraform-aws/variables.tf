@@ -3,6 +3,12 @@ variable "aws_region" {
 }
 
 variable "vpc_id" {
+  description = "VPC ID to create the Presto cluster in"
+  type = "string"
+}
+
+variable "subnet_id" {
+  description = "The subnets to deploy Presto in"
   type = "string"
 }
 
@@ -24,12 +30,7 @@ variable "http_port" {
 variable "count_workers" {
   description = "Number of workers to launch (in addition to 1 coordinator)."
   type        = "string"
-  default     = "1"
-}
-
-variable "worker_heap_size" {
-  type = "string"
-  default = "16g"
+  default     = "2"
 }
 
 variable "coordinator_instance_type" {
@@ -40,11 +41,32 @@ variable "worker_instance_type" {
   default = "c5.4xlarge"
 }
 
-variable "public_facing" {
-  default = "true"
+variable "coordinator_memory_size" {
+  # needs to be heapsize - ~5GB
+  type = "string"
+  default = 12
 }
 
 variable "coordinator_heap_size" {
   type = "string"
-  default = "16g"
+  default = 24
+}
+
+variable "worker_memory_size" {
+  # needs to be heapsize - ~5GB
+  type = "string"
+  default = 12
+}
+
+variable "worker_heap_size" {
+  type = "string"
+  default = 24 # 75% of available memory
+}
+
+variable "public_facing" {
+  default = "false"
+}
+
+variable "s3_buckets" {
+  type = "list"
 }
