@@ -38,6 +38,11 @@ variable "count_workers_spot" {
   default     = "2"
 }
 
+variable "worker_spot_hourly_price" {
+  type        = "string"
+  default     = "0.30"
+}
+
 variable "coordinator_instance_type" {
   default = "c5.4xlarge"
 }

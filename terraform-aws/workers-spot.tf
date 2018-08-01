@@ -6,6 +6,7 @@ resource "aws_launch_configuration" "workers-spot" {
   associate_public_ip_address = false
   user_data = "${data.template_file.worker-userdata-script.rendered}"
   key_name = "${var.key_name}"
+  spot_price = "${var.worker_spot_hourly_price}"
 
   lifecycle {
     create_before_destroy = true
