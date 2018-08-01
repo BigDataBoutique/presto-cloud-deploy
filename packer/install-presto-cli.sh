@@ -6,7 +6,7 @@ log() {
 }
 
 export version_presto=${PRESTO_VERSION}
-export path_install="/usr/local/presto-cli-${version_presto}"
+export path_install="/usr/local/bin"
 export path_file="presto-cli-${version_presto}-executable.jar"
 
 log "Downloading Presto CLI ${version_presto}..."

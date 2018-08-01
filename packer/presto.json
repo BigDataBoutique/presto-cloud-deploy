@@ -72,6 +72,18 @@
     },
     {
       "type": "shell",
+      "script": "install-hadoop.sh",
+      "environment_vars": [ "HADOOP_VERSION={{user `hive_version`}}" ],
+      "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
+    },
+    {
+      "type": "shell",
+      "script": "install-hive.sh",
+      "environment_vars": [ "HIVE_VERSION={{user `hive_version`}}" ],
+      "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
+    },
+    {
+      "type": "shell",
       "script": "install-presto.sh",
       "environment_vars": [ "PRESTO_VERSION={{user `presto_version`}}" ],
       "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"

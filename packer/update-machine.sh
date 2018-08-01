@@ -6,14 +6,14 @@ log() {
 }
 
 log "Updating package index..."
-sudo apt-get -qq update
+sudo apt-get update -qq
 sudo rm /boot/grub/menu.lst
 
 log "Upgrading existing packages"
-sudo apt-get -qq upgrade -y
+sudo apt-get upgrade -y -qq
 
 log "Installing prerequisites..."
-sudo apt-get -qq install -y --no-install-recommends \
+sudo apt-get install -y -qq --no-install-recommends \
    wget software-properties-common htop ntp jq apt-transport-https python
 
 # Disable daily apt unattended updates.
