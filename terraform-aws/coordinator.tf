@@ -3,7 +3,7 @@ data "template_file" "coordinator-userdata-script" {
 
   vars {
     cloud_provider              = "aws"
-    mode_presto                 = "${var.count_workers == "0" ? "coordinator-worker" : "coordinator"}"
+    mode_presto                 = "${var.count_workers == "0" && var.count_workers_spot == "0" ? "coordinator-worker" : "coordinator"}"
     heap_size                   = "${var.coordinator_heap_size}"
     memory_size                 = "${var.coordinator_memory_size}"
     total_memory_size           = "${var.coordinator_memory_size + 3}"
