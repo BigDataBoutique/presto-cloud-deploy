@@ -31,7 +31,7 @@ resource "aws_launch_configuration" "workers" {
 resource "aws_autoscaling_group" "workers" {
   name = "presto-${var.environment_name}-worker"
   min_size = "0"
-  max_size = "20"
+  max_size = "999"
   desired_capacity = "${var.count_workers}"
   launch_configuration = "${aws_launch_configuration.workers.id}"
 
@@ -51,6 +51,11 @@ resource "aws_autoscaling_group" "workers" {
   tag {
     key = "Role"
     value = "worker"
+    propagate_at_launch = true
+  }
+  tag {
+    key = "Spot"
+    value = "false"
     propagate_at_launch = true
   }
 

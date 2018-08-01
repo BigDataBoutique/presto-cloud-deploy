@@ -28,7 +28,12 @@ variable "http_port" {
 }
 
 variable "count_workers" {
-  description = "Number of workers to launch (in addition to 1 coordinator)."
+  description = "Number of workers to launch."
+  type        = "string"
+  default     = "2"
+}
+variable "count_workers_spot" {
+  description = "Number of workers on spot instances to launch."
   type        = "string"
   default     = "2"
 }
