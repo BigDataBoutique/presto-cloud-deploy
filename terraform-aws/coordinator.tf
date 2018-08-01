@@ -33,8 +33,6 @@ resource "aws_autoscaling_group" "coordinator" {
   min_size = "0"
   max_size = "1"
   desired_capacity = "1"
-  default_cooldown = 30
-  force_delete = true
   launch_configuration = "${aws_launch_configuration.coordinator.id}"
 
   vpc_zone_identifier = ["${data.aws_subnet_ids.selected.ids}"]
