@@ -26,6 +26,8 @@ install -d -o ${user_presto} -g ${user_presto} /etc/presto/
 install -d -o ${user_presto} -g ${user_presto} /etc/presto/catalog
 install -d -o ${user_presto} -g ${user_presto} /var/lib/presto/ # this is the data dir
 install -d -o ${user_presto} -g ${user_presto} /var/log/presto/
+mv ./presto-catalogs/* /etc/presto/catalog/
+rm -rf ./presto-catalogs
 
 /usr/bin/printf "PRESTO_OPTS= \
 --pid-file=${pid_file} \
@@ -74,6 +76,7 @@ ExecStop=${path_install}/bin/launcher stop \$PRESTO_OPTS
 [Install]
 WantedBy=default.target
 " > /etc/systemd/system/presto.service
+
 systemctl daemon-reload
 
 rm ${path_file}

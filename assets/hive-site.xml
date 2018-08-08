@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+    <property>
+        <name>hive.exec.script.wrapper</name>
+        <value/>
+        <description/>
+    </property>
+    <property>
+        <name>hive.exec.plan</name>
+        <value/>
+        <description/>
+    </property>
+    <property>
+        <name>hive.exec.stagingdir</name>
+        <value>.hive-staging</value>
+        <description>Directory name that will be created inside table locations in order to support HDFS encryption. This is replaces ${hive.exec.scratchdir} for query results with the exception of read-only tables. In all cases ${hive.exec.scratchdir} is still used for other temporary files, such as job plans.</description>
+    </property>
+    <property>
+        <name>hive.exec.scratchdir</name>
+        <value>/tmp/hive</value>
+        <description>HDFS root scratch dir for Hive jobs which gets created with write all (733) permission. For each connecting user, an HDFS scratch dir: ${hive.exec.scratchdir}/&lt;username&gt; is created, with ${hive.scratch.dir.permission}.</description>
+    </property>
+    <property>
+        <name>hive.query.results.cache.max.size</name>
+        <value>2147483648</value>
+        <description>Maximum total size in bytes that the query results cache directory is allowed to use on the filesystem.</description>
+    </property>
+    <property>
+        <name>hive.query.results.cache.max.entry.size</name>
+        <value>10485760</value>
+        <description>Maximum size in bytes that a single query result is allowed to use in the results cache directory</description>
+    </property>
+    <property>
+        <name>hive.notification.event.poll.interval</name>
+        <value>60s</value>
+        <description>
+            Expects a time value with unit (d/day, h/hour, m/min, s/sec, ms/msec, us/usec, ns/nsec), which is sec if not specified.
+            How often the notification log is polled for new NotificationEvents from the metastore.A nonpositive value means the notification log is never polled.
+        </description>
+    </property>
+    <property>
+        <name>hive.blobstore.supported.schemes</name>
+        <value>s3,s3a,s3n</value>
+        <description>Comma-separated list of supported blobstore schemes.</description>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionDriverName</name>
+        <value>com.mysql.jdbc.Driver</value>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionURL</name>
+        <value>jdbc:mysql://localhost:3306/hive?useSSL=false&amp;createDatabaseIfNotExist=true</value>
+        <description>JDBC connect string for a JDBC metastore</description>
+    </property>
+
+    <property>
+        <name>javax.jdo.option.ConnectionUserName</name>
+        <value>root</value>
+        <description>username to use against metastore database</description>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionPassword</name>
+        <value>pwd</value>
+    </property>
+
+    <property>
+        <name>hive.metastore.uris</name>
+        <value>thrift://localhost:9083</value>
+    </property>
+
+    <property>
+        <name>datanucleus.autoCreateSchema</name>
+        <value>false</value>
+    </property>
+
+    <property>
+        <name>fs.file.impl.disable.cache</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>fs.hdfs.impl.disable.cache</name>
+        <value>true</value>
+    </property>
+
+    <property>
+        <name>hive.server2.logging.operation.enabled</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>hive.server2.logging.operation.log.location</name>
+        <value>/tmp/hive-metastore/operation_logs</value>
+    </property>
+    <property>
+        <name>hive.server2.logging.operation.verbose</name>
+        <value>true</value>
+    </property>
+</configuration>

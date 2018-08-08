@@ -52,6 +52,12 @@ query.schedule-split-batch-size=30000
 discovery-server.enabled=true
 discovery.uri=http://localhost:${http_port}
 " > /etc/presto/config.properties
+
+  echo "Initializing Hive Metastore ($HIVE_HOME)..."
+  service mysql start
+  systemctl enable mysql
+  service hive-metastore start
+  systemctl enable hive-metastore
 fi
 
 #
@@ -94,6 +100,12 @@ node-scheduler.max-splits-per-node=24
 discovery-server.enabled=true
 discovery.uri=http://localhost:${http_port}
 " > /etc/presto/config.properties
+
+  echo "Initializing Hive Metastore ($HIVE_HOME)..."
+  service mysql start
+  systemctl enable mysql
+  service hive-metastore start
+  systemctl enable hive-metastore
 fi
 
 if [[ "${mode_presto}" == "worker" ]]; then
