@@ -69,6 +69,7 @@ variable "worker_memory_size" {
 }
 
 variable "worker_heap_size" {
+  description = "JVM heap size for workers. Recommended to set to 70% of instance memory"
   type = "string"
   default = 24 # 75% of available memory
 }

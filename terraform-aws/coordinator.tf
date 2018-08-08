@@ -35,7 +35,7 @@ resource "aws_autoscaling_group" "coordinator" {
   desired_capacity = "1"
   launch_configuration = "${aws_launch_configuration.coordinator.id}"
 
-  vpc_zone_identifier = ["${data.aws_subnet_ids.selected.ids}"]
+  vpc_zone_identifier = ["${var.subnet_id}"]
   availability_zones = ["${data.aws_subnet.selected.availability_zone}"]
 
   load_balancers = ["${aws_elb.coordinator-lb.id}"]

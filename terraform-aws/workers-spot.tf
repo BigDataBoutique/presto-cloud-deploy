@@ -20,7 +20,7 @@ resource "aws_autoscaling_group" "workers-spot" {
   desired_capacity = "${var.count_workers_spot}"
   launch_configuration = "${aws_launch_configuration.workers-spot.id}"
 
-  vpc_zone_identifier = ["${data.aws_subnet_ids.selected.ids}"]
+  vpc_zone_identifier = ["${var.subnet_id}"]
   availability_zones = ["${data.aws_subnet.selected.availability_zone}"]
 
   tag {

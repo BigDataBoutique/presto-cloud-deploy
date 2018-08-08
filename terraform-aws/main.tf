@@ -51,14 +51,6 @@ resource "aws_security_group" "presto" {
     cidr_blocks       = ["0.0.0.0/0"]
   }
 
-  # allow inter-cluster ping
-  ingress {
-    from_port         = 8
-    to_port           = 0
-    protocol          = "icmp"
-    self              = true
-  }
-
   egress {
     from_port         = 0
     to_port           = 0
