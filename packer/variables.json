@@ -1,5 +1,5 @@
 {
-  "presto_version": "0.206",
+  "presto_version": "0.207",
   "hive_version": "3.1.0",
 
   "aws_region": "us-west-2",
