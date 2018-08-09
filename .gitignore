@@ -9,3 +9,7 @@
 *.tfvars
 .idea/
 *.pem
+
+# credentials files
+gcp-account.json
+.gcp-account.json

@@ -12,16 +12,6 @@
         <description/>
     </property>
     <property>
-        <name>hive.exec.stagingdir</name>
-        <value>.hive-staging</value>
-        <description>Directory name that will be created inside table locations in order to support HDFS encryption. This is replaces ${hive.exec.scratchdir} for query results with the exception of read-only tables. In all cases ${hive.exec.scratchdir} is still used for other temporary files, such as job plans.</description>
-    </property>
-    <property>
-        <name>hive.exec.scratchdir</name>
-        <value>/tmp/hive</value>
-        <description>HDFS root scratch dir for Hive jobs which gets created with write all (733) permission. For each connecting user, an HDFS scratch dir: ${hive.exec.scratchdir}/&lt;username&gt; is created, with ${hive.scratch.dir.permission}.</description>
-    </property>
-    <property>
         <name>hive.query.results.cache.max.size</name>
         <value>2147483648</value>
         <description>Maximum total size in bytes that the query results cache directory is allowed to use on the filesystem.</description>
@@ -44,16 +34,24 @@
         <value>s3,s3a,s3n</value>
         <description>Comma-separated list of supported blobstore schemes.</description>
     </property>
+
+    <!--
     <property>
-        <name>javax.jdo.option.ConnectionDriverName</name>
-        <value>com.mysql.jdbc.Driver</value>
+        <name>javax.jdo.option.ConnectionURL</name>
+        <value>jdbc:derby:;databaseName=metastore_db;create=true</value>
+        <description>JDBC connect string for a JDBC metastore</description>
     </property>
+    -->
+
     <property>
         <name>javax.jdo.option.ConnectionURL</name>
         <value>jdbc:mysql://localhost:3306/hive?useSSL=false&amp;createDatabaseIfNotExist=true</value>
         <description>JDBC connect string for a JDBC metastore</description>
     </property>
-
+    <property>
+        <name>javax.jdo.option.ConnectionDriverName</name>
+        <value>com.mysql.jdbc.Driver</value>
+    </property>
     <property>
         <name>javax.jdo.option.ConnectionUserName</name>
         <value>root</value>
@@ -95,4 +93,59 @@
         <name>hive.server2.logging.operation.verbose</name>
         <value>true</value>
     </property>
+
+    <!--<property>-->
+    <!--<name>hive.security.metastore.authorization.manager</name>-->
+    <!--<value>org.apache.hadoop.hive.ql.security.authorization.StorageBasedAuthorizationProvider</value>-->
+    <!--</property>-->
+    <property>
+        <name>hive.server2.allow.user.substitution</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>hive.server2.enable.doAs</name>
+        <value>true</value>
+    </property>
+
+    <property>
+        <name>hive.server2.thrift.port</name>
+        <value>10000</value>
+    </property>
+
+    <property>
+        <name>hive.server2.thrift.http.port</name>
+        <value>10001</value>
+    </property>
+
+
+    <property>
+        <name>hive.server2.in.place.progress</name>
+        <value>false</value>
+    </property>
+
+    <property>
+        <name>datanucleus.fixedDatastore</name>
+        <value>true</value>
+    </property>
+
+    <property>
+        <name>mapred.reduce.tasks</name>
+        <value>-1</value>
+    </property>
+
+    <property>
+        <name>mapred.max.split.size</name>
+        <value>256000000</value>
+    </property>
+
+    <property>
+        <name>hive.metastore.connect.retries</name>
+        <value>15</value>
+    </property>
+
+    <property>
+        <name>hive.optimize.sort.dynamic.partition</name>
+        <value>true</value>
+    </property>
+
 </configuration>

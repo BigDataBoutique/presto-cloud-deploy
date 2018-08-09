@@ -39,8 +39,7 @@ service mysql start
 ln -s /usr/share/java/mysql-connector-java.jar ${HIVE_HOME}/lib/mysql-connector-java.jar
 ${HIVE_HOME}/bin/schematool -dbType mysql -initSchema
 service mysql stop
-/usr/bin/printf "max_connections = 250
-" > /etc/my.cnf
+
 
 log "Installing the Hive Metastore service"
 /usr/bin/printf "[Unit]
