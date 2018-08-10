@@ -41,7 +41,7 @@ resource "aws_autoscaling_group" "workers" {
 
   tag {
     key = "Name"
-    value = "${format("%s-presto", var.environment_name)}"
+    value = "${format("presto-%s-worker", var.environment_name)}"
     propagate_at_launch = true
   }
   tag {
