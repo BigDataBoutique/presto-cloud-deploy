@@ -61,9 +61,10 @@ resource "aws_autoscaling_group" "coordinator" {
     create_before_destroy = true
   }
 }
+
 resource "aws_elb" "coordinator-lb" {
   name            = "${format("%s-presto-lb", var.environment_name)}"
-  security_groups = ["${aws_security_group.presto.id}"]
+  security_groups = ["${concat(list(aws_security_group.presto.id), var.additional_security_groups)}"]
   subnets         = ["${var.subnet_id}"]
   internal        = "${var.public_facing == "true" ? "false" : "true"}"
 
