@@ -3,8 +3,8 @@
   "hive_version": "2.3.3",
   "hadoop_version": "2.8.4",
 
-  "aws_region": "us-west-2",
-  "aws_az": "us-west-2a",
+  "aws_region": "us-east-1",
+  "aws_az": "us-east-1a",
 
   "azure_client_id": "",
   "azure_client_secret": "",

@@ -42,3 +42,9 @@ resource "aws_iam_role_policy" "presto-service-policy" {
 }
 EOF
 }
+
+resource "aws_iam_instance_profile" "presto" {
+  name = "presto-${var.environment_name}-instance-profile"
+  path = "/"
+  role = "${aws_iam_role.presto-service-role.name}"
+}

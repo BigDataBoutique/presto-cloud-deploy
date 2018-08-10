@@ -11,10 +11,6 @@ export path_file="hadoop-${HADOOP_VERSION}.tar.gz"
 log "Downloading Hadoop ${HADOOP_VERSION}..."
 wget -q -O ${path_file} http://mirrors.sonic.net/apache/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz
 
-log "Installing Hadoop..."
-useradd hadoop || log "User [hadoop] already exists. Continuing..."
-
-install -d -o hadoop -g hadoop ${path_install}
 tar -xzf ${path_file} -C /usr/local/
 
 export HADOOP_HOME=${path_install}
