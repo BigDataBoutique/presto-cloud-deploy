@@ -18,7 +18,7 @@ sudo debconf-set-selections
 
 # Install Java 8.
 log "Executing install"
-sudo apt-get install -y -qq oracle-java8-installer oracle-java8-set-default
+sudo apt-get install oracle-java8-installer oracle-java8-set-default -y -qq
 
 export JAVA_HOME=$(jrunscript -e 'java.lang.System.out.println(java.lang.System.getProperty("java.home"));')
 /usr/bin/printf "

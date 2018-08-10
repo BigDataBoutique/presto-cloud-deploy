@@ -9,6 +9,15 @@ export path_install="/usr/local/apache-hive-${HIVE_VERSION}-bin"
 export path_file="hive-${HIVE_VERSION}.tar.gz"
 export HIVE_HOME=${path_install}
 
+export path_hadoop="/usr/local/hadoop-${HADOOP_VERSION}"
+export path_hadoop_file="hadoop-${HADOOP_VERSION}.tar.gz"
+export HADOOP_HOME=${path_hadoop}
+
+log "Downloading Hadoop ${HADOOP_VERSION}..."
+wget -q -O ${path_hadoop_file} http://mirrors.sonic.net/apache/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz
+tar -xzf ${path_hadoop_file} -C /usr/local/
+rm ${path_hadoop_file}
+
 log "Downloading Hive ${HIVE_VERSION}..."
 wget -q -O ${path_file} http://mirrors.sonic.net/apache/hive/hive-${HIVE_VERSION}/apache-hive-${HIVE_VERSION}-bin.tar.gz
 
@@ -21,14 +30,14 @@ mv hive-site.xml ${path_install}/conf/hive-site.xml
 ln -s /usr/share/java/mysql-connector-java.jar ${HIVE_HOME}/lib/mysql-connector-java.jar
 cp -n ${HADOOP_HOME}/share/hadoop/tools/lib/* ${HIVE_HOME}/lib/
 chown -R hive:hive ${path_install}
+rm ${path_file}
+
+/usr/bin/printf "
+HADOOP_HOME=${path_hadoop}
+HIVE_HOME=${path_install}" >> /etc/environment
 
 install -d -o hive -g hive /tmp/hive
 ${HADOOP_HOME}/bin/hadoop fs -chmod -R 777 /tmp/hive/
-
-/usr/bin/printf "
-HIVE_HOME=${path_install}" >> /etc/environment
-
-rm ${path_file}
 
 log "Setup MySQL backend for Hive Metastore..."
 sudo debconf-set-selections <<< 'mysql-server-5.6 mysql-server/root_password password pwd'
