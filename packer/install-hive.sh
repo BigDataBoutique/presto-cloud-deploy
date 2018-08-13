@@ -47,8 +47,10 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y -qq mysql-server libmysql-java
 log "Setup Hive Metastore..."
 service mysql start
 ${HIVE_HOME}/bin/schematool -dbType mysql -initSchema
-service mysql stop
 
+# Stop and disable the mysql service - we will only launch it on the coordinator node
+service mysql stop
+systemctl disable mysql
 
 log "Installing the Hive Metastore service"
 /usr/bin/printf "[Unit]
