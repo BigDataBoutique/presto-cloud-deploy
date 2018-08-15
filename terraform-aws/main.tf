@@ -33,7 +33,14 @@ resource "aws_security_group" "presto" {
     from_port         = "${var.http_port}"
     to_port           = "${var.http_port}"
     protocol          = "tcp"
-    cidr_blocks       = ["0.0.0.0/0"] // TODO internal only
+    self              = true
+  }
+
+  ingress {
+    from_port         = "${var.http_port}"
+    to_port           = "${var.http_port}"
+    protocol          = "tcp"
+    cidr_blocks       = ["${concat(list(var.public_facing ? "0.0.0.0/0" : data.aws_subnet.selected.cidr_block), var.allow_cidr_blocks)}"]
   }
 
   # JMX

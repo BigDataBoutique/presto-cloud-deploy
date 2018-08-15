@@ -86,6 +86,12 @@ variable "s3_buckets" {
   ]
 }
 
+variable "allow_cidr_blocks" {
+  description = "Additional CIDR blocks to allow access to the Presto UI from"
+  type = "list"
+  default = []
+}
+
 variable "additional_security_groups" {
   description = "Additional security groups requiring access to the coordinator for submitting queries"
   type = "list"
