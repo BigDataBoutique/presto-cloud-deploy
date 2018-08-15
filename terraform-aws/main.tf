@@ -48,6 +48,7 @@ resource "aws_security_group" "presto" {
     from_port         = 33381
     to_port           = 33381
     protocol          = "tcp"
+    self              = true
   }
 
   # ssh access from everywhere
