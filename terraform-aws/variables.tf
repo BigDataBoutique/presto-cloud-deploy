@@ -27,6 +27,12 @@ variable "http_port" {
   default = "8080"
 }
 
+variable "query_max_memory" {
+  description = "Total cluster memory a single query may consume. This property may be used to ensure that single query cannot use all resources in cluster. The value should be set to be higher than what typical expected query in system will need."
+  type = "string"
+  default = "500GB"
+}
+
 variable "count_workers" {
   description = "Number of workers to launch."
   type        = "string"

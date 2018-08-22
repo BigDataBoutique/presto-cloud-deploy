@@ -7,6 +7,7 @@ data "template_file" "coordinator-userdata-script" {
     heap_size                   = "${var.coordinator_heap_size}"
     memory_size                 = "${var.coordinator_memory_size}"
     total_memory_size           = "${var.coordinator_memory_size + 3}"
+    query_max_memory            = "${var.query_max_memory}"
     environment_name            = "${var.environment_name}"
     security_groups             = "${aws_security_group.presto.id}"
     http_port                   = "${var.http_port}"

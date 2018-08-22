@@ -43,6 +43,7 @@ if [[ "${mode_presto}" == "coordinator" ]]; then
 coordinator=true
 node-scheduler.include-coordinator=false
 http-server.http.port=${http_port}
+query.max-memory=${query_max_memory}
 # query.max-memory-per-node has to be <= query.max-total-memory-per-node
 query.max-memory-per-node=${memory_size}GB
 query.max-total-memory-per-node=${total_memory_size}GB
@@ -72,6 +73,7 @@ if [[ "${mode_presto}" == "worker" ]]; then
 #
 coordinator=false
 http-server.http.port=${http_port}
+query.max-memory=${query_max_memory}
 query.max-memory-per-node=${memory_size}GB
 query.max-total-memory-per-node=${total_memory_size}GB
 memory.heap-headroom-per-node=8GB
@@ -95,7 +97,7 @@ if [[ "${mode_presto}" == "coordinator-worker" ]]; then
 coordinator=true
 node-scheduler.include-coordinator=true
 http-server.http.port=${http_port}
-query.max-memory=4GB
+query.max-memory=${query_max_memory}
 node-scheduler.max-splits-per-node=24
 discovery-server.enabled=true
 discovery.uri=http://localhost:${http_port}
