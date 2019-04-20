@@ -1,6 +1,6 @@
 # Deploying Presto on the Cloud easily
 
-> [Presto](https://prestodb.io/) is an open source distributed SQL query engine for running interactive analytic queries against data sources of all sizes ranging from gigabytes to petabytes.
+> [Presto](https://prestosql.io/) is an open source distributed SQL query engine for running interactive analytic queries against data sources of all sizes ranging from gigabytes to petabytes.
   
 > Presto was designed and written from the ground up for interactive analytics and approaches the speed of commercial data warehouses while scaling to the size of organizations like Facebook.
 
@@ -34,7 +34,7 @@ See [this guide](https://blog.gruntwork.io/how-to-manage-terraform-state-28f5697
 
 Presto has a nice UI for viewing cluster operations and currently running queries. It can be accessed from http://presto-coordinator-ip:8080/ui/.
 
-In order to run queries, you can connect to Presto [via JDBC](https://prestodb.io/docs/current/installation/jdbc.html) or SSH into the coordinator node and use the Presto CLI:
+In order to run queries, you can connect to Presto [via JDBC](https://prestosql.io/docs/current/installation/jdbc.html) or SSH into the coordinator node and use the Presto CLI:
 
 ```bash
 presto --catalog hive --schema default
@@ -44,7 +44,7 @@ Note the use of Presto's "catalogs". A Catalog in Presto is a definition of a co
 
 By default, we enable the local Hive Metastore catalog, and the JMX catalog. To customize or add your own, see the `catalogs` folder. Changes to this folder require running `packer` again.
 
-See [here](https://prestodb.io/docs/current/overview/concepts.html) for more Presto concepts.
+See [here](https://prestosql.io/docs/current/overview/concepts.html) for more Presto concepts.
 
 ## Configuration
 
