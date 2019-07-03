@@ -15,6 +15,7 @@ data "aws_ami" "presto" {
     name = "tag:ImageType"
     values = ["presto-packer-image"]
   }
+  owners      = ["self"]
   most_recent = true
 }
 
