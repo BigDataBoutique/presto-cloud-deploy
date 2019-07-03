@@ -5,9 +5,13 @@ log() {
   echo "==> $(basename ${0}): ${1}"
 }
 
+DEBIAN_FRONTEND=noninteractive
+
+TZ=Etc/UTC
+ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 log "Updating package index..."
 sudo apt-get update -qq
-sudo rm /boot/grub/menu.lst
 
 log "Upgrading existing packages"
 sudo apt-get upgrade -y -qq
