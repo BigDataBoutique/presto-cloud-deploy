@@ -15,7 +15,8 @@ export pid_file="/var/run/presto/presto.pid"
 export user_presto='presto'
 
 log "Downloading Presto ${version_presto}..."
-wget -q -O ${path_file} "https://repo1.maven.org/maven2/com/facebook/presto/presto-server/${version_presto}/presto-server-${version_presto}.tar.gz"
+
+wget -q -O ${path_file} "https://repo1.maven.org/maven2/io/prestosql/presto-server/${version_presto}/presto-server-${version_presto}.tar.gz"
 
 log "Installing Presto ${version_presto}..."
 useradd ${user_presto} || log "User [${user_presto}] already exists. Continuing..."
@@ -28,21 +29,6 @@ install -d -o ${user_presto} -g ${user_presto} /var/lib/presto/ # this is the da
 install -d -o ${user_presto} -g ${user_presto} /var/log/presto/
 mv ./presto-catalogs/* /etc/presto/catalog/
 rm -rf ./presto-catalogs
-
-/usr/bin/printf "PRESTO_OPTS= \
---pid-file=${pid_file} \
---node-config=/etc/presto/node.properties \
---jvm-config=/etc/presto/jvm.config \
---config=/etc/presto/config.properties \
---launcher-log-file=/var/log/presto/launcher.log \
---server-log-file=/var/log/presto/server.log \
--Dhttp-server.log.path=/var/log/presto/http-request.log \
--Dcatalog.config-dir=/etc/presto/catalog
-[Install]
-WantedBy=default.target
-" >> /etc/default/presto
-
-chown ${user_presto}:${user_presto} /etc/default/presto
 
 /usr/bin/printf "PRESTO_OPTS= \
 --pid-file=${pid_file} \

@@ -10,7 +10,8 @@ export path_install="/usr/local/bin"
 export path_file="presto-cli-${version_presto}-executable.jar"
 
 log "Downloading Presto CLI ${version_presto}..."
-wget -q -O ${path_file} "https://repo1.maven.org/maven2/com/facebook/presto/presto-cli/${version_presto}/presto-cli-${version_presto}-executable.jar"
+
+wget -q -O ${path_file} "https://repo1.maven.org/maven2/io/prestosql/presto-cli/${version_presto}/presto-cli-${version_presto}-executable.jar"
 
 log "Installing Presto CLI ${version_presto}..."
 
