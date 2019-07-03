@@ -15,19 +15,17 @@ node.data-dir=/var/lib/presto/
 " > /etc/presto/node.properties
 
 /usr/bin/printf "-server
--XX:+PrintGC
--XX:+PrintGCDateStamps
--XX:MaxRAM=15500m
 -Xmx${heap_size}G
+-XX:-UseBiasedLocking
 -XX:+UseG1GC
 -XX:G1HeapRegionSize=32M
--XX:+UseGCOverheadLimit
 -XX:+ExplicitGCInvokesConcurrent
--XX:+UseNUMA
--XX:+AggressiveOpts
 -XX:+HeapDumpOnOutOfMemoryError
 -XX:+ExitOnOutOfMemoryError
--Djava.library.path=/usr/local/lib
+-XX:+UseGCOverheadLimit
+-XX:ReservedCodeCacheSize=512M
+-Djdk.attach.allowAttachSelf=true
+-Djdk.nio.maxCachedBufferSize=2000000
 " > /etc/presto/jvm.config
 
 #
@@ -128,4 +126,3 @@ if [[ "${mode_presto}" == "coordinator" ]]; then
     done
     echo "Presto Coordinator is now online"
 fi
-
