@@ -29,6 +29,7 @@ tar -xzf ${path_file} -C /usr/local/
 mv hive-site.xml ${path_install}/conf/hive-site.xml
 ln -s /usr/share/java/mysql-connector-java.jar ${HIVE_HOME}/lib/mysql-connector-java.jar
 cp -n ${HADOOP_HOME}/share/hadoop/tools/lib/* ${HIVE_HOME}/lib/
+echo "export JAVA_HOME=$JAVA8_HOME" >> ${path_install}/bin/hive-config.sh
 chown -R hive:hive ${path_install}
 rm ${path_file}
 
@@ -60,7 +61,7 @@ After=network-online.target
 User=root
 Restart=on-failure
 Type=simple
-Environment="HADOOP_HOME=${HADOOP_HOME}" "JAVA_HOME=${JAVA_HOME}" "HIVE_HOME=${HIVE_HOME}"
+Environment="HADOOP_HOME=${HADOOP_HOME}" "JAVA_HOME=${JAVA_8_HOME}" "HIVE_HOME=${HIVE_HOME}"
 ExecStart=${HIVE_HOME}/bin/hive --service metastore
 [Install]
 WantedBy=default.target
