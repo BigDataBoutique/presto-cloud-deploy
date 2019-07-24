@@ -67,7 +67,7 @@
     },
     {
       "type": "shell",
-      "script": "install-java11.sh",
+      "script": "install-java.sh",
       "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
     },
     {
