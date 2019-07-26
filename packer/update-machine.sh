@@ -18,7 +18,9 @@ sudo -E apt-get upgrade -y -qq
 
 log "Installing prerequisites..."
 sudo -E apt-get install -y -qq --no-install-recommends \
-   wget software-properties-common htop ntp jq apt-transport-https python
+   wget software-properties-common htop apt-transport-https python3
+
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 10
 
 # Disable daily apt unattended updates.
 echo 'APT::Periodic::Enable "0";' >> /etc/apt/apt.conf.d/10periodic
