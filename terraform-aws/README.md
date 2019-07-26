@@ -25,6 +25,7 @@ Edit `variables.tf` to specify the following:
 * `vpc_id` - the ID of the VPC to launch the cluster in.
 * `public_facing` - whether or not the coordinator node should be open to the internet. The default and the highly recommended value is `false`.
 * `additional_security_groups` - here you add IDs for security groups you want to add to the coordinator load balancer so your clients (e.g. Redash, applications, etc) can access the coordinator for querying.
+* `count_clients` - number of client nodes with Redash and Apache Superset installed, with configured admin user and datasource pointing to the Presto cluster. Default is `0`.
 
 You can launch workers and spot-workers (workers which run on spot-instances).
 

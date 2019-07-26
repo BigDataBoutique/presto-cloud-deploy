@@ -19,6 +19,62 @@ data "aws_ami" "presto" {
   most_recent = true
 }
 
+data "aws_ami" "superset_redash" {
+  filter {
+    name = "state"
+    values = ["available"]
+  }
+  filter {
+    name = "tag:ImageType"
+    values = ["superset-redash-packer-image"]
+  }
+  owners      = ["self"]
+  most_recent = true
+}
+
+resource "aws_security_group" "presto-clients" {
+  name = "presto-clients-${var.environment_name}-clients-security-group"
+  description = "Presto clients access"
+  vpc_id = "${var.vpc_id}"
+
+  tags {
+    Name = "presto-clients-${var.environment_name}"
+    environment = "${var.environment_name}"
+  }
+
+  # ssh access from everywhere
+  ingress {
+    from_port         = 22
+    to_port           = 22
+    protocol          = "tcp"
+    cidr_blocks       = ["0.0.0.0/0"]
+  }
+  
+  # Redash
+  ingress {
+    from_port         = 80
+    to_port           = 80
+    protocol          = "tcp"
+    cidr_blocks       = ["0.0.0.0/0"]
+  }
+
+  # Apache Superset
+  ingress {
+    from_port         = 8080
+    to_port           = 8080
+    protocol          = "tcp"
+    cidr_blocks       = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port         = 0
+    to_port           = 0
+    protocol          = "-1"
+    cidr_blocks       = ["0.0.0.0/0"]
+  }
+}
+
+
 resource "aws_security_group" "presto" {
   name = "presto-${var.environment_name}-clients-security-group"
   description = "Presto access"

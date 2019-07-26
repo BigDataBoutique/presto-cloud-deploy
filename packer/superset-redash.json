@@ -1,0 +1,44 @@
+{
+    "description": "Apache Superset and Redash Image",
+    "builders": [
+      {
+        "type": "amazon-ebs",
+        "ami_name": "superset-redash-{{isotime | clean_ami_name}}",
+        "availability_zone": "{{user `aws_az`}}",
+        "iam_instance_profile": "packer",
+        "instance_type": "t2.small",
+        "region": "{{user `aws_region`}}",
+        "run_tags": {
+          "role": "packer"
+        },
+        "source_ami_filter": {
+          "filters": {
+            "virtualization-type": "hvm",
+            "name": "redash-5.0.2-*",
+            "root-device-type": "ebs"
+          },
+          "owners": ["465267886299"],
+          "most_recent": true
+        },
+        "ssh_timeout": "10m",
+        "ssh_username": "ubuntu",
+        "tags": {
+          "ImageType": "superset-redash-packer-image"
+        },
+        "spot_price": "0"
+      }
+    ],
+    "provisioners": [
+      {
+        "type": "shell",
+        "script": "superset-redash/update-machine.sh",
+        "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
+      },
+      {
+        "type": "shell",
+        "script": "superset-redash/install-superset.sh",
+        "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
+      }
+    ]
+  }
+  

@@ -33,6 +33,12 @@ variable "query_max_memory" {
   default = "500GB"
 }
 
+variable "count_clients" {
+  description = "Number of nodes with Apache Superset and Redash installed."
+  type        = "string"
+  default     = 0
+}
+
 variable "count_workers" {
   description = "Number of workers to launch."
   type        = "string"
