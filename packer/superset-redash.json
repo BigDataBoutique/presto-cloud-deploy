@@ -14,10 +14,10 @@
         "source_ami_filter": {
           "filters": {
             "virtualization-type": "hvm",
-            "name": "redash-5.0.2-*",
+            "name": "presto-*",
             "root-device-type": "ebs"
           },
-          "owners": ["465267886299"],
+          "owners": ["self"],
           "most_recent": true
         },
         "ssh_timeout": "10m",
@@ -37,6 +37,11 @@
       {
         "type": "shell",
         "script": "superset-redash/install-superset.sh",
+        "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
+      },
+      {
+        "type": "shell",
+        "script": "superset-redash/install-redash.sh",
         "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
       }
     ]

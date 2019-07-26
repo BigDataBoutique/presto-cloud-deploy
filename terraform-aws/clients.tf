@@ -51,18 +51,20 @@ resource "aws_elb" "clients-lb" {
   }
 }
 
-resource "aws_lb_cookie_stickiness_policy" "superset-stickiness-policy" {
+resource "aws_app_cookie_stickiness_policy" "superset-stickiness-policy" {
   count                    = "${var.count_clients != "0" ? 1 : 0}"
   name                     = "superset-stickiness-policy"
   load_balancer            = "${aws_elb.clients-lb.id}"
   lb_port                  = 8080
+  cookie_name              = "session"
 }
 
-resource "aws_lb_cookie_stickiness_policy" "redash-stickiness-policy" {
+resource "aws_app_cookie_stickiness_policy" "redash-stickiness-policy" {
   count                    = "${var.count_clients != "0" ? 1 : 0}"
   name                     = "redash-stickiness-policy"
   load_balancer            = "${aws_elb.clients-lb.id}"
   lb_port                  = 80
+  cookie_name              = "session"
 }
 
 resource "aws_launch_configuration" "clients" {
