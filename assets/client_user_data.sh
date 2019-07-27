@@ -21,6 +21,7 @@ cd -
 
 ### Apache Superset
 
+. /etc/environment
 . /opt/superset/venv/bin/activate
 
 superset db upgrade
@@ -95,4 +96,10 @@ rm /tmp/presto-datasource.yaml
 #]
 #EOF
 
-systemctl start superset
+nohup gunicorn -w 10 \
+      -k gevent \
+      --timeout 120 \
+      -b  0.0.0.0:8080 \
+      --limit-request-line 0 \
+      --limit-request-field_size 0 \
+      superset:app &
