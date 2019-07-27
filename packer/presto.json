@@ -67,7 +67,7 @@
     },
     {
       "type": "shell",
-      "script": "presto/install-java11.sh",
+      "script": "presto/install-java.sh",
       "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
     },
     {
