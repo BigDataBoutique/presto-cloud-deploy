@@ -76,6 +76,7 @@ resource "aws_launch_configuration" "clients" {
   user_data                   = "${data.template_file.client-userdata-script.rendered}"
   key_name                    = "${var.key_name}"
   associate_public_ip_address = false
+  spot_price                  = "${var.clients_use_spot == "true" ? var.client_spot_hourly_price : ""}"
 
   lifecycle {
     create_before_destroy = true
@@ -111,7 +112,7 @@ resource "aws_autoscaling_group" "clients" {
   }
   tag {
     key = "Spot"
-    value = "false"
+    value = "${var.clients_use_spot}"
     propagate_at_launch = true
   }
 

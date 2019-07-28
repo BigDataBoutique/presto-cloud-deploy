@@ -39,11 +39,23 @@ variable "count_clients" {
   default     = 0
 }
 
+variable "clients_use_spot" {
+  description = "Whether to use spot instances for client nodes"
+  type        = "string"
+  default     = "false" 
+}
+
+variable "client_spot_hourly_price" {
+  type        = "string"
+  default     = "0.30"
+}
+
 variable "count_workers" {
   description = "Number of workers to launch."
   type        = "string"
   default     = 0
 }
+
 variable "count_workers_spot" {
   description = "Number of workers on spot instances to launch."
   type        = "string"
@@ -60,6 +72,10 @@ variable "coordinator_instance_type" {
 }
 
 variable "worker_instance_type" {
+  default = "c5.4xlarge"
+}
+
+variable "client_instance_type" {
   default = "c5.4xlarge"
 }
 
