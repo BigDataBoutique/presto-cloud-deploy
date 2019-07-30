@@ -1,9 +1,9 @@
 {
-    "description": "Apache Superset and Redash Image",
+    "description": "Presto clients image",
     "builders": [
       {
         "type": "amazon-ebs",
-        "ami_name": "superset-redash-{{isotime | clean_ami_name}}",
+        "ami_name": "presto-clients-{{isotime | clean_ami_name}}",
         "availability_zone": "{{user `aws_az`}}",
         "iam_instance_profile": "packer",
         "instance_type": "t2.small",
@@ -20,10 +20,18 @@
           "owners": ["self"],
           "most_recent": true
         },
+        "launch_block_device_mappings": [
+          {
+            "device_name": "/dev/sda1",
+            "volume_size": 15,
+            "volume_type": "gp2",
+            "delete_on_termination": true
+          }
+        ],
         "ssh_timeout": "10m",
         "ssh_username": "ubuntu",
         "tags": {
-          "ImageType": "superset-redash-packer-image"
+          "ImageType": "presto-clients-packer-image"
         },
         "spot_price": "0"
       }
@@ -31,17 +39,22 @@
     "provisioners": [
       {
         "type": "shell",
-        "script": "superset-redash/update-machine.sh",
+        "script": "presto-clients/update-machine.sh",
         "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
       },
       {
         "type": "shell",
-        "script": "superset-redash/install-superset.sh",
+        "script": "presto-clients/install-superset.sh",
         "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
       },
       {
         "type": "shell",
-        "script": "superset-redash/install-redash.sh",
+        "script": "presto-clients/install-zeppelin.sh",
+        "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
+      },
+      {
+        "type": "shell",
+        "script": "presto-clients/install-redash.sh",
         "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
       }
     ]

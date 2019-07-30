@@ -19,14 +19,14 @@ data "aws_ami" "presto" {
   most_recent = true
 }
 
-data "aws_ami" "superset_redash" {
+data "aws_ami" "presto-clients" {
   filter {
     name = "state"
     values = ["available"]
   }
   filter {
     name = "tag:ImageType"
-    values = ["superset-redash-packer-image"]
+    values = ["presto-clients-packer-image"]
   }
   owners      = ["self"]
   most_recent = true
@@ -52,16 +52,42 @@ resource "aws_security_group" "presto-clients" {
   
   # Redash
   ingress {
-    from_port         = 80
-    to_port           = 80
+    from_port         = 10000
+    to_port           = 10000
+    protocol          = "tcp"
+    cidr_blocks       = ["0.0.0.0/0"]
+  }
+  ingress {
+    from_port         = 10001
+    to_port           = 10001
     protocol          = "tcp"
     cidr_blocks       = ["0.0.0.0/0"]
   }
 
   # Apache Superset
   ingress {
-    from_port         = 8080
-    to_port           = 8080
+    from_port         = 20000
+    to_port           = 20000
+    protocol          = "tcp"
+    cidr_blocks       = ["0.0.0.0/0"]
+  }
+  ingress {
+    from_port         = 20001
+    to_port           = 20001
+    protocol          = "tcp"
+    cidr_blocks       = ["0.0.0.0/0"]
+  }
+  
+  # Zeppelin
+  ingress {
+    from_port         = 30000
+    to_port           = 30000
+    protocol          = "tcp"
+    cidr_blocks       = ["0.0.0.0/0"]
+  }
+  ingress {
+    from_port         = 30001
+    to_port           = 30001
     protocol          = "tcp"
     cidr_blocks       = ["0.0.0.0/0"]
   }
@@ -73,7 +99,6 @@ resource "aws_security_group" "presto-clients" {
     cidr_blocks       = ["0.0.0.0/0"]
   }
 }
-
 
 resource "aws_security_group" "presto" {
   name = "presto-${var.environment_name}-clients-security-group"

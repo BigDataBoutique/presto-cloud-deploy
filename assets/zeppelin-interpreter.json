@@ -1,0 +1,51 @@
+{
+    "id": "presto",
+    "name": "presto",
+    "group": "jdbc",
+    "properties": {
+        "default.url": {
+            "name": "default.url",
+            "value": "jdbc:presto://PRESTO_HOST/hive/default",
+            "type": "string"
+        },
+        "default.driver": {
+            "name": "default.driver",
+            "value": "com.facebook.presto.jdbc.PrestoDriver",
+            "type": "string"
+        },
+        "default.user": {
+            "name": "default.user",
+            "value": "presto",
+            "type": "string"
+        }
+    },
+    "status": "READY",
+    "interpreterGroup": [
+        {
+            "name": "sql",
+            "class": "org.apache.zeppelin.jdbc.JDBCInterpreter",
+            "defaultInterpreter": false,
+            "editor": {
+                "language": "sql",
+                "editOnDblClick": false,
+                "completionSupport": true
+            }
+        }
+    ],
+    "dependencies": [
+        {
+            "groupArtifactVersion": "/opt/zeppelin/interpreter/jdbc/presto-jdbc-0.170.jar",
+            "local": false
+        }
+    ],
+    "option": {
+        "remote": true,
+        "port": -1,
+        "perNote": "shared",
+        "perUser": "shared",
+        "isExistingProcess": false,
+        "setPermission": false,
+        "owners": [],
+        "isUserImpersonate": false
+    }
+}
