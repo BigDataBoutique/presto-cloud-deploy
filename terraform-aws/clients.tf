@@ -4,6 +4,7 @@ data "template_file" "client-userdata-script" {
 
   vars {
     presto_coordinator_host  = "${aws_elb.coordinator-lb.dns_name}"
+    coordinator_port         = "${var.http_port}"
     admin_password           = "${var.count_clients != "0" ? random_string.clients-admin-password.result : ""}"
     cert_pem                 = "${tls_self_signed_cert.presto-clients-cert.cert_pem}"
     key_pem                  = "${tls_private_key.presto-clients-private-key.private_key_pem}"
@@ -109,7 +110,7 @@ resource "aws_elb" "clients-lb" {
     healthy_threshold   = 2
     unhealthy_threshold = 2
     timeout             = 3
-    target              = "HTTP:8000/health"
+    target              = "HTTP:20000/health"
     interval            = 6
   }
   
@@ -148,6 +149,22 @@ resource "aws_app_cookie_stickiness_policy" "superset-https-stickiness-policy" {
   load_balancer            = "${aws_elb.clients-lb.id}"
   lb_port                  = 20001
   cookie_name              = "session"
+}
+
+resource "aws_app_cookie_stickiness_policy" "zeppelin-stickiness-policy" {
+  count                    = "${var.count_clients != "0" ? 1 : 0}"
+  name                     = "zeppelin-stickiness-policy"
+  load_balancer            = "${aws_elb.clients-lb.id}"
+  lb_port                  = 30000
+  cookie_name              = "JSESSIONID"
+}
+
+resource "aws_app_cookie_stickiness_policy" "zeppelin-https-stickiness-policy" {
+  count                    = "${var.count_clients != "0" ? 1 : 0}"
+  name                     = "zeppelin-stickiness-policy"
+  load_balancer            = "${aws_elb.clients-lb.id}"
+  lb_port                  = 30001
+  cookie_name              = "JSESSIONID"
 }
 
 resource "aws_launch_configuration" "clients" {

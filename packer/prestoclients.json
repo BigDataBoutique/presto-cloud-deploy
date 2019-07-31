@@ -3,7 +3,7 @@
     "builders": [
       {
         "type": "amazon-ebs",
-        "ami_name": "presto-clients-{{isotime | clean_ami_name}}",
+        "ami_name": "prestoclients-{{isotime | clean_ami_name}}",
         "availability_zone": "{{user `aws_az`}}",
         "iam_instance_profile": "packer",
         "instance_type": "t2.small",
@@ -31,7 +31,7 @@
         "ssh_timeout": "10m",
         "ssh_username": "ubuntu",
         "tags": {
-          "ImageType": "presto-clients-packer-image"
+          "ImageType": "prestoclients-packer-image"
         },
         "spot_price": "0"
       }
@@ -39,22 +39,22 @@
     "provisioners": [
       {
         "type": "shell",
-        "script": "presto-clients/update-machine.sh",
+        "script": "prestoclients/update-machine.sh",
         "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
       },
       {
         "type": "shell",
-        "script": "presto-clients/install-superset.sh",
+        "script": "prestoclients/install-redash.sh",
         "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
       },
       {
         "type": "shell",
-        "script": "presto-clients/install-zeppelin.sh",
+        "script": "prestoclients/install-superset.sh",
         "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
       },
       {
         "type": "shell",
-        "script": "presto-clients/install-redash.sh",
+        "script": "prestoclients/install-zeppelin.sh",
         "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
       }
     ]

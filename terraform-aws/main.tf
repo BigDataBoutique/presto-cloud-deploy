@@ -26,7 +26,7 @@ data "aws_ami" "presto-clients" {
   }
   filter {
     name = "tag:ImageType"
-    values = ["presto-clients-packer-image"]
+    values = ["prestoclients-packer-image"]
   }
   owners      = ["self"]
   most_recent = true

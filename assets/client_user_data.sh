@@ -68,14 +68,12 @@ xmlstarlet ed \
   -u "//property[name='zeppelin.anonymous.allowed']/value" \
   -v false < /opt/zeppelin/conf/zeppelin-site.xml.template | sudo tee /opt/zeppelin/conf/zeppelin-site.xml
 
-
-sudo wget https://repo1.maven.org/maven2/com/facebook/presto/presto-jdbc/0.170/presto-jdbc-0.170.jar -P /opt/zeppelin/interpreter/jdbc
-#sudo wget https://repo1.maven.org/maven2/com/facebook/presto/presto-jdbc/0.223/presto-jdbc-0.223.jar -P /opt/zeppelin/interpreter/jdbc
-
 cat /opt/zeppelin/conf/interpreter.json | jq --argfile presto /tmp/presto_zeppelin_interpreter.json '.interpreterSettings.presto = $presto' > /tmp/interpreter.json
+sed -i 's/PRESTO_HOST/${presto_coordinator_host}:${coordinator_port}/g' /tmp/interpreter.json
 sudo mv /tmp/interpreter.json /opt/zeppelin/conf/interpreter.json
 
-sudo service zeppelin start
+sudo chown zeppelin:zeppelin /opt/zeppelin/conf -R
+sudo service zeppelin restart
 
 ### Apache Superset
 
