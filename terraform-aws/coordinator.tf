@@ -10,6 +10,8 @@ data "template_file" "coordinator-userdata-script" {
     query_max_memory            = "${var.query_max_memory}"
     environment_name            = "${var.environment_name}"
     security_groups             = "${aws_security_group.presto.id}"
+    aws_access_key_id           = "${var.aws_access_key_id}"
+    aws_secret_access_key       = "${var.aws_secret_access_key}"
     http_port                   = "${var.http_port}"
     address_presto_coordinator  = ""
   }

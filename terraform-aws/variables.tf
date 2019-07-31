@@ -92,6 +92,16 @@ variable "s3_buckets" {
   ]
 }
 
+variable "aws_access_key_id" {
+  type = "string"
+  default = "" 
+}
+
+variable "aws_secret_access_key" {
+  type = "string"
+  default = "" 
+}
+
 variable "allow_cidr_blocks" {
   description = "Additional CIDR blocks to allow access to the Presto UI from"
   type = "list"
