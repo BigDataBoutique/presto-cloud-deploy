@@ -33,7 +33,8 @@
         "tags": {
           "ImageType": "prestoclients-packer-image"
         },
-        "spot_price": "0"
+        "spot_price_auto_product": "Linux/UNIX (Amazon VPC)",
+        "spot_price": "auto"
       }
     ],
     "provisioners": [

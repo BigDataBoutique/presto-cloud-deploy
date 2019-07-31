@@ -3,7 +3,7 @@ output "coordinator-lb-dns" {
 }
 
 output "clients-lb-dns" {
-  value = "${aws_elb.clients-lb.*.dns_name}"
+  value = "${aws_lb.clients-lb.*.dns_name}"
 }
 
 output "clients-admin-password" {

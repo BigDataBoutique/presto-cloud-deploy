@@ -12,6 +12,11 @@ variable "subnet_id" {
   type = "string"
 }
 
+variable "clients_lb_subnets" {
+  description = "A list of subnet IDs to attach to the clients LB"
+  type = "list" 
+}
+
 variable "key_name" {
   default = "presto"
 }

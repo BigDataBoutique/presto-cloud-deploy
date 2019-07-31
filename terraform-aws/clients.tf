@@ -51,120 +51,200 @@ resource "aws_iam_server_certificate" "presto-clients-cert" {
   }
 }
 
-resource "aws_elb" "clients-lb" {
-  count           = "${var.count_clients != "0" ? 1 : 0}"
-  name            = "${format("%s-presto-clients-lb", var.environment_name)}"
-  security_groups = ["${concat(list(aws_security_group.presto-clients.id), var.additional_security_groups)}"]
-  subnets         = ["${var.subnet_id}"]
-  internal        = "false" 
+# Redash LB configuration
+resource "aws_lb_target_group" "redash-clients" {
+  name      = "redash-clients-tg"
+  port      = "10000"
+  protocol  = "HTTP"
+  vpc_id    = "${var.vpc_id}"
 
-  cross_zone_load_balancing   = false
-  idle_timeout                = 400
-
-  listener {
-    instance_port     = "10000"
-    instance_protocol = "http"
-    lb_port           = "10000"
-    lb_protocol       = "http"
+  stickiness {
+    type = "lb_cookie"
   }
 
-  listener {
-    instance_port     = "10001"
-    instance_protocol = "https"
-    lb_port           = "10001"
-    lb_protocol         = "https"
-    ssl_certificate_id  = "${aws_iam_server_certificate.presto-clients-cert.arn}"
+  health_check {
+    protocol = "HTTP"
+    matcher  = "302"
   }
+}
+resource "aws_lb_listener" "redash-clients" {
+  load_balancer_arn = "${aws_lb.clients-lb.arn}"
+  port              = "10000"
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.redash-clients.arn}"
+  }
+}
+resource "aws_lb_target_group" "redash-https-clients" {
+  name      = "redash-https-clients-tg"
+  port      = "10001"
+  protocol  = "HTTPS"
+  vpc_id    = "${var.vpc_id}"
   
-  listener {
-    instance_port     = "20000"
-    instance_protocol = "http"
-    lb_port           = "20000"
-    lb_protocol       = "http"
-  }
-
-  listener {
-    instance_port     = "20001"
-    instance_protocol = "https"
-    lb_port           = "20001"
-    lb_protocol         = "https"
-    ssl_certificate_id  = "${aws_iam_server_certificate.presto-clients-cert.arn}"
-  }
-
-  listener {
-    instance_port     = "30000"
-    instance_protocol = "http"
-    lb_port           = "30000"
-    lb_protocol       = "http"
-  }
-
-  listener {
-    instance_port     = "30001"
-    instance_protocol = "https"
-    lb_port           = "30001"
-    lb_protocol         = "https"
-    ssl_certificate_id  = "${aws_iam_server_certificate.presto-clients-cert.arn}"
+  stickiness {
+    type = "lb_cookie"
   }
   
   health_check {
-    healthy_threshold   = 2
-    unhealthy_threshold = 2
-    timeout             = 3
-    target              = "HTTP:20000/health"
-    interval            = 6
+    protocol = "HTTPS"
+    matcher  = "302"
   }
+}
+resource "aws_lb_listener" "redash-https-clients" {
+  load_balancer_arn = "${aws_lb.clients-lb.arn}"
+  port              = "10001"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = "${aws_iam_server_certificate.presto-clients-cert.arn}"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.redash-https-clients.arn}"
+  }
+}
+
+# Superset LB configuration
+resource "aws_lb_target_group" "superset-clients" {
+  name      = "superset-clients-tg"
+  port      = "20000"
+  protocol  = "HTTP"
+  vpc_id    = "${var.vpc_id}"
+  
+  stickiness {
+    type = "lb_cookie"
+  }
+
+  health_check {
+    path = "/health"
+  }
+}
+resource "aws_lb_listener" "superset-clients" {
+  load_balancer_arn = "${aws_lb.clients-lb.arn}"
+  port              = "20000"
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.superset-clients.arn}"
+  }
+}
+resource "aws_lb_target_group" "superset-https-clients" {
+  name      = "superset-https-clients-tg"
+  port      = "20001"
+  protocol  = "HTTPS"
+  vpc_id    = "${var.vpc_id}"
+  
+  stickiness {
+    type = "lb_cookie"
+  }
+
+  health_check {
+    path = "/health"
+    protocol = "HTTPS"
+  }
+}
+resource "aws_lb_listener" "superset-https-clients" {
+  load_balancer_arn = "${aws_lb.clients-lb.arn}"
+  port              = "20001"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = "${aws_iam_server_certificate.presto-clients-cert.arn}"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.superset-https-clients.arn}"
+  }
+}
+
+# Zeppelin LB configuration
+resource "aws_lb_target_group" "zeppelin-clients" {
+  name      = "zeppelin-clients-tg"
+  port      = "30000"
+  protocol  = "HTTP"
+  vpc_id    = "${var.vpc_id}"
+  
+  stickiness {
+    type = "lb_cookie"
+  }
+}
+resource "aws_lb_listener" "zeppelin-clients" {
+  load_balancer_arn = "${aws_lb.clients-lb.arn}"
+  port              = "30000"
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.zeppelin-clients.arn}"
+  }
+}
+resource "aws_lb_listener_rule" "zeppelin-clients-websockets-rule" {
+  listener_arn = "${aws_lb_listener.zeppelin-clients.arn}"
+  priority     = 99
+
+  action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.zeppelin-clients.arn}"
+  }
+
+  condition {
+    field  = "path-pattern"
+    values = ["/ws"]
+  }
+}
+resource "aws_lb_target_group" "zeppelin-https-clients" {
+  name      = "zeppelin-https-clients-tg"
+  port      = "30001"
+  protocol  = "HTTPS"
+  vpc_id    = "${var.vpc_id}"
+  
+  stickiness {
+    type = "lb_cookie"
+  }
+}
+resource "aws_lb_listener" "zeppelin-https-clients" {
+  load_balancer_arn = "${aws_lb.clients-lb.arn}"
+  port              = "30001"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = "${aws_iam_server_certificate.presto-clients-cert.arn}"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.zeppelin-https-clients.arn}"
+  }
+}
+resource "aws_lb_listener_rule" "zeppelin-https-clients-websockets-rule" {
+  listener_arn = "${aws_lb_listener.zeppelin-https-clients.arn}"
+  priority     = 99
+
+  action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.zeppelin-https-clients.arn}"
+  }
+
+  condition {
+    field  = "path-pattern"
+    values = ["/ws"]
+  }
+}
+# Clients ALB
+resource "aws_lb" "clients-lb" {
+  count              = "${var.count_clients != "0" ? 1 : 0}"
+  load_balancer_type = "application"
+  internal           = "false" 
+  name               = "${format("%s-presto-clients-lb", var.environment_name)}"
+  security_groups    = ["${concat(list(aws_security_group.presto-clients.id), var.additional_security_groups)}"]
+
+  subnets            = ["${split(",", join(",", var.clients_lb_subnets))}"]
+
+
+  idle_timeout       = 400
   
   tags {
     Name = "${format("%s-presto-client-lb", var.environment_name)}"
   }
-}
-
-resource "aws_app_cookie_stickiness_policy" "redash-stickiness-policy" {
-  count                    = "${var.count_clients != "0" ? 1 : 0}"
-  name                     = "redash-stickiness-policy"
-  load_balancer            = "${aws_elb.clients-lb.id}"
-  lb_port                  = 10000
-  cookie_name              = "session"
-}
-
-resource "aws_app_cookie_stickiness_policy" "redash-https-stickiness-policy" {
-  count                    = "${var.count_clients != "0" ? 1 : 0}"
-  name                     = "redash-stickiness-policy"
-  load_balancer            = "${aws_elb.clients-lb.id}"
-  lb_port                  = 10001
-  cookie_name              = "session"
-}
-
-resource "aws_app_cookie_stickiness_policy" "superset-stickiness-policy" {
-  count                    = "${var.count_clients != "0" ? 1 : 0}"
-  name                     = "superset-stickiness-policy"
-  load_balancer            = "${aws_elb.clients-lb.id}"
-  lb_port                  = 20000
-  cookie_name              = "session"
-}
-
-resource "aws_app_cookie_stickiness_policy" "superset-https-stickiness-policy" {
-  count                    = "${var.count_clients != "0" ? 1 : 0}"
-  name                     = "superset-stickiness-policy"
-  load_balancer            = "${aws_elb.clients-lb.id}"
-  lb_port                  = 20001
-  cookie_name              = "session"
-}
-
-resource "aws_app_cookie_stickiness_policy" "zeppelin-stickiness-policy" {
-  count                    = "${var.count_clients != "0" ? 1 : 0}"
-  name                     = "zeppelin-stickiness-policy"
-  load_balancer            = "${aws_elb.clients-lb.id}"
-  lb_port                  = 30000
-  cookie_name              = "JSESSIONID"
-}
-
-resource "aws_app_cookie_stickiness_policy" "zeppelin-https-stickiness-policy" {
-  count                    = "${var.count_clients != "0" ? 1 : 0}"
-  name                     = "zeppelin-stickiness-policy"
-  load_balancer            = "${aws_elb.clients-lb.id}"
-  lb_port                  = 30001
-  cookie_name              = "JSESSIONID"
 }
 
 resource "aws_launch_configuration" "clients" {
@@ -197,7 +277,14 @@ resource "aws_autoscaling_group" "clients" {
 
   vpc_zone_identifier   = ["${var.subnet_id}"]
   availability_zones    = ["${data.aws_subnet.selected.availability_zone}"]
-  load_balancers        = ["${aws_elb.clients-lb.id}"]
+  target_group_arns     = [
+    "${aws_lb_target_group.redash-clients.arn}",
+    "${aws_lb_target_group.redash-https-clients.arn}",
+    "${aws_lb_target_group.superset-clients.arn}",
+    "${aws_lb_target_group.superset-https-clients.arn}",
+    "${aws_lb_target_group.zeppelin-clients.arn}",
+    "${aws_lb_target_group.zeppelin-https-clients.arn}"
+  ]
 
   tag {
     key = "Name"
