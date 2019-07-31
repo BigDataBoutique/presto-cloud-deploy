@@ -68,6 +68,7 @@ resource "aws_lb_target_group" "redash-clients" {
   }
 }
 resource "aws_lb_listener" "redash-clients" {
+  count             = "${var.count_clients != "0" ? 1 : 0}"
   load_balancer_arn = "${aws_lb.clients-lb.arn}"
   port              = "10000"
   protocol          = "HTTP"
@@ -93,6 +94,7 @@ resource "aws_lb_target_group" "redash-https-clients" {
   }
 }
 resource "aws_lb_listener" "redash-https-clients" {
+  count             = "${var.count_clients != "0" ? 1 : 0}"
   load_balancer_arn = "${aws_lb.clients-lb.arn}"
   port              = "10001"
   protocol          = "HTTPS"
@@ -121,6 +123,7 @@ resource "aws_lb_target_group" "superset-clients" {
   }
 }
 resource "aws_lb_listener" "superset-clients" {
+  count             = "${var.count_clients != "0" ? 1 : 0}"
   load_balancer_arn = "${aws_lb.clients-lb.arn}"
   port              = "20000"
   protocol          = "HTTP"
@@ -146,6 +149,7 @@ resource "aws_lb_target_group" "superset-https-clients" {
   }
 }
 resource "aws_lb_listener" "superset-https-clients" {
+  count             = "${var.count_clients != "0" ? 1 : 0}"
   load_balancer_arn = "${aws_lb.clients-lb.arn}"
   port              = "20001"
   protocol          = "HTTPS"
@@ -170,6 +174,7 @@ resource "aws_lb_target_group" "zeppelin-clients" {
   }
 }
 resource "aws_lb_listener" "zeppelin-clients" {
+  count             = "${var.count_clients != "0" ? 1 : 0}"
   load_balancer_arn = "${aws_lb.clients-lb.arn}"
   port              = "30000"
   protocol          = "HTTP"
@@ -180,6 +185,7 @@ resource "aws_lb_listener" "zeppelin-clients" {
   }
 }
 resource "aws_lb_listener_rule" "zeppelin-clients-websockets-rule" {
+  count        = "${var.count_clients != "0" ? 1 : 0}"
   listener_arn = "${aws_lb_listener.zeppelin-clients.arn}"
   priority     = 99
 
@@ -204,6 +210,7 @@ resource "aws_lb_target_group" "zeppelin-https-clients" {
   }
 }
 resource "aws_lb_listener" "zeppelin-https-clients" {
+  count             = "${var.count_clients != "0" ? 1 : 0}"
   load_balancer_arn = "${aws_lb.clients-lb.arn}"
   port              = "30001"
   protocol          = "HTTPS"
@@ -216,6 +223,7 @@ resource "aws_lb_listener" "zeppelin-https-clients" {
   }
 }
 resource "aws_lb_listener_rule" "zeppelin-https-clients-websockets-rule" {
+  count        = "${var.count_clients != "0" ? 1 : 0}"
   listener_arn = "${aws_lb_listener.zeppelin-https-clients.arn}"
   priority     = 99
 
