@@ -37,6 +37,8 @@ rm ${path_file}
 HADOOP_HOME=${path_hadoop}
 HIVE_HOME=${path_install}" >> /etc/environment
 
+echo "export PATH=\"\$PATH:${path_install}/bin\"" > /etc/profile.d/apache-hive.sh
+
 install -d -o hive -g hive /tmp/hive
 ${HADOOP_HOME}/bin/hadoop fs -chmod -R 777 /tmp/hive/
 
