@@ -15,6 +15,7 @@ variable "subnet_id" {
 variable "clients_lb_subnets" {
   description = "A list of subnet IDs to attach to the clients LB"
   type = "list" 
+  default = []
 }
 
 variable "key_name" {
