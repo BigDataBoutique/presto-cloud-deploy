@@ -116,19 +116,22 @@ if [[ "${mode_presto}" == "worker" ]]; then
 fi
 
 if [ ! -z "${aws_access_key_id}" ] && [ ! -z "${aws_secret_access_key}" ]; then
+  # Update hive-site.xml
   /usr/bin/printf "<configuration>
   <property>
   <name>fs.s3.awsAccessKeyId</name>
   <value>${aws_access_key_id}</value>
   </property>
-
   <property>
   <name>fs.s3.awsSecretAccessKey</name>
   <value>${aws_secret_access_key}</value>
   </property>" > /tmp/hive-site-partial.txt
-
   sudo sed -i "s/<configuration>/$(sed 's@[/\&]@\\&@g;$!s/$/\\/' /tmp/hive-site-partial.txt)/g" /usr/local/apache-hive-*-bin/conf/hive-site.xml
   rm /tmp/hive-site-partial.txt
+
+  # Update hive.properties
+  sed -i -E "s/^#hive.s3.aws-access-key.+$/hive.s3.aws-access-key=${aws_access_key_id}/g" /etc/presto/catalog/hive.properties
+  sed -i -E "s/^#hive.s3.aws-secret-key.+$/hive.s3.aws-secret-key=${aws_secret_access_key}/g" /etc/presto/catalog/hive.properties
 fi
 
 echo "Starting presto..."
