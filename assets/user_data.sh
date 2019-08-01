@@ -3,9 +3,9 @@ set -e
 
 exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 
-cat <<'EOF' >>/etc/security/limits.conf
-presto soft soft nofile 16384
-presto hard soft nofile 16384
+cat <<'EOF' >/etc/security/limits.d/100-presto-nofile.conf
+presto soft nofile 16384
+presto hard nofile 16384
 EOF
 
 /usr/bin/printf "
