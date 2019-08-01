@@ -240,7 +240,7 @@ resource "aws_lb" "clients-lb" {
   count              = "${var.count_clients != "0" ? 1 : 0}"
   load_balancer_type = "application"
   internal           = "false" 
-  name               = "${format("%s-presto-clients-lb", var.environment_name)}"
+  name               = "${format("%s-presto-client-lb", var.environment_name)}"
   security_groups    = ["${concat(list(aws_security_group.presto-clients.id), var.additional_security_groups)}"]
 
   subnets            = ["${split(",", join(",", var.clients_lb_subnets))}"]
