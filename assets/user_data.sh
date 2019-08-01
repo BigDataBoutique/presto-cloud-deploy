@@ -28,6 +28,43 @@ node.data-dir=/var/lib/presto/
 -Djdk.nio.maxCachedBufferSize=2000000
 " > /etc/presto/jvm.config
 
+function setup_hive_metastore {
+  # Mount persistent storage and apply Hive Metastore schema if needed
+
+  DEVICE_NAME=$(lsblk -ip | tail -n +2 | awk '{print $1 " " ($7? "MOUNTEDPART" : "") }' | sed ':a;N;$!ba;s/\n`/ /g' | grep -v MOUNTEDPART)
+  MOUNT_PATH=/var/lib/mysql
+
+  sudo mv $MOUNT_PATH /tmp/mysql.backup 
+  sudo mkdir -p $MOUNT_PATH
+
+  if sudo mount -o defaults -t ext4 $DEVICE_NAME $MOUNT_PATH; then
+    echo 'Successfully mounted existing disk'
+  else
+    echo 'Trying to mount a fresh disk'
+    sudo mkfs.ext4 -m 0 -F -E lazy_itable_init=0,lazy_journal_init=0,discard $DEVICE_NAME
+    sudo mount -o defaults -t ext4 $DEVICE_NAME $MOUNT_PATH && echo 'Successfully mounted a fresh disk'
+    sudo cp -ar /tmp/mysql.backup/* $MOUNT_PATH/
+  fi
+
+  sudo chown mysql:mysql -R $MOUNT_PATH
+  sudo chmod 700 $MOUNT_PATH
+
+  service mysql start
+  systemctl enable mysql
+
+  . /etc/environment
+  export HADOOP_HOME=$HADOOP_HOME
+
+  if ! $HIVE_HOME/bin/schematool -validate -dbType mysql; then
+    echo "Mysql schema is not valid"
+    $HIVE_HOME/bin/schematool -dbType mysql -initSchema
+  fi
+
+  echo "Initializing Hive Metastore ($HIVE_HOME)..."
+  service hive-metastore start
+  systemctl enable hive-metastore
+}
+
 #
 # Configure as COORDINATOR
 #
@@ -52,11 +89,7 @@ discovery-server.enabled=true
 discovery.uri=http://localhost:${http_port}
 " > /etc/presto/config.properties
 
-  echo "Initializing Hive Metastore ($HIVE_HOME)..."
-  service mysql start
-  systemctl enable mysql
-  service hive-metastore start
-  systemctl enable hive-metastore
+  setup_hive_metastore
 fi
 
 #
@@ -101,11 +134,7 @@ discovery-server.enabled=true
 discovery.uri=http://localhost:${http_port}
 " > /etc/presto/config.properties
 
-  echo "Initializing Hive Metastore ($HIVE_HOME)..."
-  service mysql start
-  systemctl enable mysql
-  service hive-metastore start
-  systemctl enable hive-metastore
+  setup_hive_metastore
 fi
 
 if [[ "${mode_presto}" == "worker" ]]; then

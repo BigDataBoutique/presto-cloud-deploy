@@ -26,6 +26,12 @@ resource "aws_launch_configuration" "coordinator" {
   associate_public_ip_address = "${var.public_facing}"
   user_data = "${data.template_file.coordinator-userdata-script.rendered}"
   key_name = "${var.key_name}"
+  
+  ebs_block_device {
+    volume_type = "gp2"
+    device_name = "/dev/xvdh"
+    volume_size = "10" # GB
+  }
 
   lifecycle {
     create_before_destroy = true

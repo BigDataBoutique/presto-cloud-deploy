@@ -45,12 +45,7 @@ sudo debconf-set-selections <<< 'mysql-server-5.6 mysql-server/root_password pas
 sudo debconf-set-selections <<< 'mysql-server-5.6 mysql-server/root_password_again password pwd'
 DEBIAN_FRONTEND=noninteractive apt-get install -y -qq mysql-server libmysql-java
 
-log "Setup Hive Metastore..."
-service mysql start
-${HIVE_HOME}/bin/schematool -dbType mysql -initSchema
-
-# Stop and disable the mysql service - we will only launch it on the coordinator node
-service mysql stop
+# Disable the mysql service - we will only need it on the coordinator node
 systemctl disable mysql
 
 log "Installing the Hive Metastore service"
