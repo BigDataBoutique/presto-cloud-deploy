@@ -10,13 +10,6 @@ EOF
 cat <<'EOF' >/opt/certs/server.key
 ${key_pem}
 EOF
-cat <<'EOF' >/etc/nginx/conf.d/clients.conf
-${nginx_conf}
-EOF
-cat <<'EOF' >/tmp/presto_zeppelin_interpreter.json
-${presto_zeppelin_interp}
-EOF
-
 
 ### Redash 
 
@@ -25,8 +18,9 @@ cd /opt/redash
 sudo -E docker-compose exec -T server ./manage.py users create_root admin@redash admin --password "${admin_password}"
 sudo -E docker-compose exec -T server ./manage.py ds new presto --type presto --options '{"host": "${presto_coordinator_host}", "username": "admin"}'
 
-# Patch nginx out of docker-compose
-sed -i '/^.*nginx:$/,$d' docker-compose.yml
+
+docker-compose down
+sed -i '/^.*nginx:$/,$d' docker-compose.yml # patch out nginx service
 
 # Redash OAuth setup
 # See https://redash.io/help/open-source/admin-guide/google-developer-account-setup
@@ -34,9 +28,7 @@ sed -i '/^.*nginx:$/,$d' docker-compose.yml
 #REDASH_GOOGLE_CLIENT_ID=#
 #REDASH_GOOGLE_CLIENT_SECRET=#
 #EOF
-#docker-compose up -d server
 
-docker-compose down
 docker-compose up -d
 
 cd -
@@ -68,42 +60,27 @@ xmlstarlet ed \
   -u "//property[name='zeppelin.anonymous.allowed']/value" \
   -v false < /opt/zeppelin/conf/zeppelin-site.xml.template | sudo tee /opt/zeppelin/conf/zeppelin-site.xml
 
-cat /opt/zeppelin/conf/interpreter.json | jq --argfile presto /tmp/presto_zeppelin_interpreter.json '.interpreterSettings.presto = $presto' > /tmp/interpreter.json
+cat /opt/zeppelin/conf/interpreter.json | jq --argfile presto /opt/zeppelin/conf/zeppelin-interpreter-partial.json '.interpreterSettings.presto = $presto' > /tmp/interpreter.json
 sed -i 's/PRESTO_HOST/${presto_coordinator_host}:${coordinator_port}/g' /tmp/interpreter.json
 sudo mv /tmp/interpreter.json /opt/zeppelin/conf/interpreter.json
+sudo rm /opt/zeppelin/conf/zeppelin-interpreter-partial.json
 
 sudo chown zeppelin:zeppelin /opt/zeppelin/conf -R
 sudo service zeppelin restart
 
 ### Apache Superset
-
 . /etc/environment
 . /opt/superset/venv/bin/activate
 
 superset db upgrade
-
 export FLASK_APP=superset
 flask fab create-admin --username admin --password ${admin_password} --firstname "" --lastname "" --email ""
-
 superset init
 
 # Create presto datasource
-cat <<'EOF' >/tmp/presto-datasource.yaml
-databases:
-- database_name: presto
-  extra: "{\r\n    \"metadata_params\": {},\r\n    \"engine_params\": {},\r\n    \"\
-    metadata_cache_timeout\": {},\r\n    \"schemas_allowed_for_csv_upload\": []\r\n\
-    }\r\n"
-  sqlalchemy_uri: presto://${presto_coordinator_host}
-  tables: []
-EOF
-superset import_datasources -p /tmp/presto-datasource.yaml
-rm /tmp/presto-datasource.yaml
-
-cat <<'EOF' >/opt/superset/config/superset_config.py
-ENABLE_PROXY_FIX = True
-PREFERRED_URL_SCHEME = 'https'
-EOF
+sudo sed -i -E "s/PRESTO_COORDINATOR_HOST/${presto_coordinator_host}/g" /opt/superset/config/presto-datasource.yaml
+superset import_datasources -p /opt/superset/config/presto-datasource.yaml
+sudo rm /opt/superset/config/presto-datasource.yaml
 
 # Presto OAuth setup
 # See https://superset.incubator.apache.org/faq.html?highlight=oauth#how-can-i-configure-oauth-authentication-and-authorization

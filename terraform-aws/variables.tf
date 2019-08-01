@@ -82,7 +82,7 @@ variable "worker_instance_type" {
 }
 
 variable "client_instance_type" {
-  default = "c5.4xlarge"
+  default = "t2.large"
 }
 
 variable "coordinator_memory_size" {

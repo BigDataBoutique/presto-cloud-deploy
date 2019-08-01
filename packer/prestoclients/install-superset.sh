@@ -23,3 +23,18 @@ pip install pandas==0.23.4
 
 # See https://github.com/apache/incubator-superset/issues/6977
 pip install sqlalchemy==1.2.18
+
+cat <<'EOF' >$SUPERSET_CONFIG_PATH/presto-datasource.yaml
+databases:
+- database_name: presto
+  extra: "{\r\n    \"metadata_params\": {},\r\n    \"engine_params\": {},\r\n    \"\
+    metadata_cache_timeout\": {},\r\n    \"schemas_allowed_for_csv_upload\": []\r\n\
+    }\r\n"
+  sqlalchemy_uri: presto://PRESTO_COORDINATOR_HOST
+  tables: []
+EOF
+
+cat <<'EOF' >$SUPERSET_CONFIG_PATH/superset_config.py
+ENABLE_PROXY_FIX = True
+PREFERRED_URL_SCHEME = 'https'
+EOF

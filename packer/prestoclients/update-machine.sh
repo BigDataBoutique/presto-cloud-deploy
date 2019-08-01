@@ -22,3 +22,6 @@ sudo -E apt-get install -y -qq --no-install-recommends \
 
 systemctl enable nginx.service
 systemctl stop nginx.service
+
+sudo mkdir -p /etc/nginx/conf.d
+sudo mv /tmp/clients-nginx.conf /etc/nginx/conf.d/clients.conf

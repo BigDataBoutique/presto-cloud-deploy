@@ -3,6 +3,7 @@ wget https://www-eu.apache.org/dist/zeppelin/zeppelin-0.8.1/zeppelin-0.8.1-bin-a
 sudo tar xf zeppelin-*-bin-all.tgz -C /opt
 rm zeppelin-0.8.1-bin-all.tgz
 sudo mv /opt/zeppelin-*-bin-all /opt/zeppelin
+sudo cp zeppelin-interpreter-partial.json /opt/zeppelin/conf/zeppelin-interpreter-partial.json
 
 # avoiding issues on >=0.180 versions of presto-jdbc
 # https://groups.google.com/forum/#!topic/presto-users/koT1Yv3sKG4

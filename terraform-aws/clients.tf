@@ -8,8 +8,6 @@ data "template_file" "client-userdata-script" {
     admin_password           = "${var.count_clients != "0" ? random_string.clients-admin-password.result : ""}"
     cert_pem                 = "${tls_self_signed_cert.presto-clients-cert.cert_pem}"
     key_pem                  = "${tls_private_key.presto-clients-private-key.private_key_pem}"
-    nginx_conf               = "${file("../assets/nginx.conf")}"
-    presto_zeppelin_interp   = "${file("../assets/zeppelin-interpreter.json")}"
   }
 }
 

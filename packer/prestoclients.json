@@ -24,7 +24,6 @@
           {
             "device_name": "/dev/sda1",
             "volume_size": 15,
-            "volume_type": "gp2",
             "delete_on_termination": true
           }
         ],
@@ -39,6 +38,16 @@
     ],
     "provisioners": [
       {
+        "type": "file",
+        "source": "../assets/nginx.conf",
+        "destination": "/tmp/clients-nginx.conf"
+      },
+      {
+        "type": "file",
+        "source": "../assets/zeppelin-interpreter.json",
+        "destination": "/tmp/zeppelin-interpreter-partial.json"
+      },
+      {
         "type": "shell",
         "script": "prestoclients/update-machine.sh",
         "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
@@ -46,6 +55,7 @@
       {
         "type": "shell",
         "script": "prestoclients/install-redash.sh",
+        "environment_vars": [ "REDASH_VERSION={{user `redash_version`}}" ],
         "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
       },
       {
