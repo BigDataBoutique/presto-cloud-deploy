@@ -32,6 +32,7 @@ cp -n ${HADOOP_HOME}/share/hadoop/tools/lib/* ${HIVE_HOME}/lib/
 echo "export JAVA_HOME=$JAVA8_HOME" >> ${path_install}/bin/hive-config.sh
 chown -R hive:hive ${path_install}
 rm ${path_file}
+echo "export PATH=\"\$PATH:${path_install}/bin\"" > /etc/profile.d/apache-hive.sh
 
 /usr/bin/printf "
 HADOOP_HOME=${path_hadoop}
