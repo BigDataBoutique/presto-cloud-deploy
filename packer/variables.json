@@ -2,6 +2,7 @@
   "presto_version": "316",
   "hive_version": "2.3.5",
   "hadoop_version": "2.8.4",
+  "redash_version": "7.0.0",
 
   "aws_region": "us-east-1",
   "aws_az": "us-east-1a",

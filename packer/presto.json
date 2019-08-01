@@ -62,12 +62,12 @@
   "provisioners": [
     {
       "type": "shell",
-      "script": "update-machine.sh",
+      "script": "presto/update-machine.sh",
       "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
     },
     {
       "type": "shell",
-      "script": "install-java.sh",
+      "script": "presto/install-java.sh",
       "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
     },
     {
@@ -77,7 +77,7 @@
     },
     {
       "type": "shell",
-      "script": "install-hive.sh",
+      "script": "presto/install-hive.sh",
       "environment_vars": [ "HIVE_VERSION={{user `hive_version`}}", "HADOOP_VERSION={{user `hadoop_version`}}" ],
       "execute_command": "echo '' | {{ .Vars }} sudo -E -S bash '{{ .Path }}'"
     },
@@ -88,13 +88,13 @@
     },
     {
       "type": "shell",
-      "script": "install-presto.sh",
+      "script": "presto/install-presto.sh",
       "environment_vars": [ "PRESTO_VERSION={{user `presto_version`}}" ],
       "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
     },
     {
       "type": "shell",
-      "script": "install-presto-cli.sh",
+      "script": "presto/install-presto-cli.sh",
       "environment_vars": [ "PRESTO_VERSION={{user `presto_version`}}" ],
       "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
     }
