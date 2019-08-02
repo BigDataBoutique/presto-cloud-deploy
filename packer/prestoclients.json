@@ -1,0 +1,74 @@
+{
+    "description": "Presto clients image",
+    "builders": [
+      {
+        "type": "amazon-ebs",
+        "ami_name": "prestoclients-{{isotime | clean_ami_name}}",
+        "availability_zone": "{{user `aws_az`}}",
+        "iam_instance_profile": "packer",
+        "instance_type": "t2.small",
+        "region": "{{user `aws_region`}}",
+        "run_tags": {
+          "role": "packer"
+        },
+        "source_ami_filter": {
+          "filters": {
+            "virtualization-type": "hvm",
+            "name": "presto-*",
+            "root-device-type": "ebs"
+          },
+          "owners": ["self"],
+          "most_recent": true
+        },
+        "launch_block_device_mappings": [
+          {
+            "device_name": "/dev/sda1",
+            "volume_size": 15,
+            "volume_type": "standard",
+            "delete_on_termination": true
+          }
+        ],
+        "ssh_timeout": "10m",
+        "ssh_username": "ubuntu",
+        "tags": {
+          "ImageType": "prestoclients-packer-image"
+        },
+        "spot_price_auto_product": "Linux/UNIX (Amazon VPC)",
+        "spot_price": "auto"
+      }
+    ],
+    "provisioners": [
+      {
+        "type": "file",
+        "source": "../assets/nginx.conf",
+        "destination": "/tmp/clients-nginx.conf"
+      },
+      {
+        "type": "file",
+        "source": "../assets/zeppelin-interpreter.json",
+        "destination": "/tmp/zeppelin-interpreter-partial.json"
+      },
+      {
+        "type": "shell",
+        "script": "prestoclients/update-machine.sh",
+        "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
+      },
+      {
+        "type": "shell",
+        "script": "prestoclients/install-redash.sh",
+        "environment_vars": [ "REDASH_VERSION={{user `redash_version`}}" ],
+        "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
+      },
+      {
+        "type": "shell",
+        "script": "prestoclients/install-superset.sh",
+        "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
+      },
+      {
+        "type": "shell",
+        "script": "prestoclients/install-zeppelin.sh",
+        "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
+      }
+    ]
+  }
+  

@@ -12,6 +12,12 @@ variable "subnet_id" {
   type = "string"
 }
 
+variable "clients_lb_subnets" {
+  description = "A list of subnet IDs to attach to the clients LB"
+  type = "list" 
+  default = []
+}
+
 variable "key_name" {
   default = "presto"
 }
@@ -33,11 +39,29 @@ variable "query_max_memory" {
   default = "500GB"
 }
 
+variable "count_clients" {
+  description = "Number of nodes with Apache Superset and Redash installed."
+  type        = "string"
+  default     = 0
+}
+
+variable "clients_use_spot" {
+  description = "Whether to use spot instances for client nodes"
+  type        = "string"
+  default     = "false" 
+}
+
+variable "client_spot_hourly_price" {
+  type        = "string"
+  default     = "0.30"
+}
+
 variable "count_workers" {
   description = "Number of workers to launch."
   type        = "string"
   default     = 0
 }
+
 variable "count_workers_spot" {
   description = "Number of workers on spot instances to launch."
   type        = "string"
@@ -55,6 +79,10 @@ variable "coordinator_instance_type" {
 
 variable "worker_instance_type" {
   default = "c5.4xlarge"
+}
+
+variable "client_instance_type" {
+  default = "t2.large"
 }
 
 variable "coordinator_memory_size" {
