@@ -26,6 +26,7 @@ node.data-dir=/var/lib/presto/
 -XX:ReservedCodeCacheSize=512M
 -Djdk.attach.allowAttachSelf=true
 -Djdk.nio.maxCachedBufferSize=2000000
+-Duser.timezone=UTC
 " > /etc/presto/jvm.config
 
 #
