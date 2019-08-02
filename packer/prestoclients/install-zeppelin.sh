@@ -10,9 +10,11 @@ sudo cp zeppelin-interpreter-partial.json /opt/zeppelin/conf/zeppelin-interprete
 sudo wget https://repo1.maven.org/maven2/com/facebook/presto/presto-jdbc/0.170/presto-jdbc-0.170.jar -P /opt/zeppelin/interpreter/jdbc
 
 sudo useradd -d /opt/zeppelin -s /bin/false zeppelin
-sudo chown -R zeppelin:zeppelin /opt/zeppelin
 
-echo "JAVA_HOME=$JAVA8_HOME" | sudo tee /opt/zeppelin/conf/zeppelin-env.sh
+/usr/bin/printf "
+export JAVA_HOME=$JAVA8_HOME
+export ZEPPELIN_PORT=9090
+" >> /opt/zeppelin/conf/zeppelin-env.sh
 
 /usr/bin/printf "
 [Unit]
@@ -32,4 +34,5 @@ Restart=always
 WantedBy=multi-user.target
 " > /etc/systemd/system/zeppelin.service
 
+sudo chown -R zeppelin:zeppelin /opt/zeppelin
 sudo systemctl enable zeppelin
