@@ -52,46 +52,25 @@ resource "aws_security_group" "presto-clients" {
   
   # Redash
   ingress {
-    from_port         = 10000
-    to_port           = 10000
+    from_port         = 8500
+    to_port           = 8500
     protocol          = "tcp"
     cidr_blocks       = ["0.0.0.0/0"]
   }
+  # Superset
   ingress {
-    from_port         = 10001
-    to_port           = 10001
+    from_port         = 8600
+    to_port           = 8600
     protocol          = "tcp"
     cidr_blocks       = ["0.0.0.0/0"]
   }
-
-  # Apache Superset
-  ingress {
-    from_port         = 20000
-    to_port           = 20000
-    protocol          = "tcp"
-    cidr_blocks       = ["0.0.0.0/0"]
-  }
-  ingress {
-    from_port         = 20001
-    to_port           = 20001
-    protocol          = "tcp"
-    cidr_blocks       = ["0.0.0.0/0"]
-  }
-  
   # Zeppelin
   ingress {
-    from_port         = 30000
-    to_port           = 30000
+    from_port         = 8700
+    to_port           = 8700
     protocol          = "tcp"
     cidr_blocks       = ["0.0.0.0/0"]
   }
-  ingress {
-    from_port         = 30001
-    to_port           = 30001
-    protocol          = "tcp"
-    cidr_blocks       = ["0.0.0.0/0"]
-  }
-
   egress {
     from_port         = 0
     to_port           = 0

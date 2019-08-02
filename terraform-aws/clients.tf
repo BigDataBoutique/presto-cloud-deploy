@@ -50,35 +50,9 @@ resource "aws_iam_server_certificate" "presto-clients-cert" {
 }
 
 # Redash LB configuration
-resource "aws_lb_target_group" "redash-clients" {
-  name      = "redash-clients-tg"
-  port      = "10000"
-  protocol  = "HTTP"
-  vpc_id    = "${var.vpc_id}"
-
-  stickiness {
-    type = "lb_cookie"
-  }
-
-  health_check {
-    protocol = "HTTP"
-    matcher  = "302"
-  }
-}
-resource "aws_lb_listener" "redash-clients" {
-  count             = "${var.count_clients != "0" ? 1 : 0}"
-  load_balancer_arn = "${aws_lb.clients-lb.arn}"
-  port              = "10000"
-  protocol          = "HTTP"
-
-  default_action {
-    type             = "forward"
-    target_group_arn = "${aws_lb_target_group.redash-clients.arn}"
-  }
-}
 resource "aws_lb_target_group" "redash-https-clients" {
   name      = "redash-https-clients-tg"
-  port      = "10001"
+  port      = "8500"
   protocol  = "HTTPS"
   vpc_id    = "${var.vpc_id}"
   
@@ -94,7 +68,7 @@ resource "aws_lb_target_group" "redash-https-clients" {
 resource "aws_lb_listener" "redash-https-clients" {
   count             = "${var.count_clients != "0" ? 1 : 0}"
   load_balancer_arn = "${aws_lb.clients-lb.arn}"
-  port              = "10001"
+  port              = "8500"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-2016-08"
   certificate_arn   = "${aws_iam_server_certificate.presto-clients-cert.arn}"
@@ -106,34 +80,9 @@ resource "aws_lb_listener" "redash-https-clients" {
 }
 
 # Superset LB configuration
-resource "aws_lb_target_group" "superset-clients" {
-  name      = "superset-clients-tg"
-  port      = "20000"
-  protocol  = "HTTP"
-  vpc_id    = "${var.vpc_id}"
-  
-  stickiness {
-    type = "lb_cookie"
-  }
-
-  health_check {
-    path = "/health"
-  }
-}
-resource "aws_lb_listener" "superset-clients" {
-  count             = "${var.count_clients != "0" ? 1 : 0}"
-  load_balancer_arn = "${aws_lb.clients-lb.arn}"
-  port              = "20000"
-  protocol          = "HTTP"
-
-  default_action {
-    type             = "forward"
-    target_group_arn = "${aws_lb_target_group.superset-clients.arn}"
-  }
-}
 resource "aws_lb_target_group" "superset-https-clients" {
   name      = "superset-https-clients-tg"
-  port      = "20001"
+  port      = "8600"
   protocol  = "HTTPS"
   vpc_id    = "${var.vpc_id}"
   
@@ -149,7 +98,7 @@ resource "aws_lb_target_group" "superset-https-clients" {
 resource "aws_lb_listener" "superset-https-clients" {
   count             = "${var.count_clients != "0" ? 1 : 0}"
   load_balancer_arn = "${aws_lb.clients-lb.arn}"
-  port              = "20001"
+  port              = "8600"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-2016-08"
   certificate_arn   = "${aws_iam_server_certificate.presto-clients-cert.arn}"
@@ -161,45 +110,9 @@ resource "aws_lb_listener" "superset-https-clients" {
 }
 
 # Zeppelin LB configuration
-resource "aws_lb_target_group" "zeppelin-clients" {
-  name      = "zeppelin-clients-tg"
-  port      = "30000"
-  protocol  = "HTTP"
-  vpc_id    = "${var.vpc_id}"
-  
-  stickiness {
-    type = "lb_cookie"
-  }
-}
-resource "aws_lb_listener" "zeppelin-clients" {
-  count             = "${var.count_clients != "0" ? 1 : 0}"
-  load_balancer_arn = "${aws_lb.clients-lb.arn}"
-  port              = "30000"
-  protocol          = "HTTP"
-
-  default_action {
-    type             = "forward"
-    target_group_arn = "${aws_lb_target_group.zeppelin-clients.arn}"
-  }
-}
-resource "aws_lb_listener_rule" "zeppelin-clients-websockets-rule" {
-  count        = "${var.count_clients != "0" ? 1 : 0}"
-  listener_arn = "${aws_lb_listener.zeppelin-clients.arn}"
-  priority     = 99
-
-  action {
-    type             = "forward"
-    target_group_arn = "${aws_lb_target_group.zeppelin-clients.arn}"
-  }
-
-  condition {
-    field  = "path-pattern"
-    values = ["/ws"]
-  }
-}
 resource "aws_lb_target_group" "zeppelin-https-clients" {
   name      = "zeppelin-https-clients-tg"
-  port      = "30001"
+  port      = "8700"
   protocol  = "HTTPS"
   vpc_id    = "${var.vpc_id}"
   
@@ -210,7 +123,7 @@ resource "aws_lb_target_group" "zeppelin-https-clients" {
 resource "aws_lb_listener" "zeppelin-https-clients" {
   count             = "${var.count_clients != "0" ? 1 : 0}"
   load_balancer_arn = "${aws_lb.clients-lb.arn}"
-  port              = "30001"
+  port              = "8700"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-2016-08"
   certificate_arn   = "${aws_iam_server_certificate.presto-clients-cert.arn}"
@@ -284,11 +197,8 @@ resource "aws_autoscaling_group" "clients" {
   vpc_zone_identifier   = ["${var.subnet_id}"]
   availability_zones    = ["${data.aws_subnet.selected.availability_zone}"]
   target_group_arns     = [
-    "${aws_lb_target_group.redash-clients.arn}",
     "${aws_lb_target_group.redash-https-clients.arn}",
-    "${aws_lb_target_group.superset-clients.arn}",
     "${aws_lb_target_group.superset-https-clients.arn}",
-    "${aws_lb_target_group.zeppelin-clients.arn}",
     "${aws_lb_target_group.zeppelin-https-clients.arn}"
   ]
 

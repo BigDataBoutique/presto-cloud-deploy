@@ -27,6 +27,7 @@ pip install sqlalchemy==1.2.18
 cat <<'EOF' >$SUPERSET_CONFIG_PATH/presto-datasource.yaml
 databases:
 - database_name: presto
+  expose_in_sqllab: true
   extra: "{\r\n    \"metadata_params\": {},\r\n    \"engine_params\": {},\r\n    \"\
     metadata_cache_timeout\": {},\r\n    \"schemas_allowed_for_csv_upload\": []\r\n\
     }\r\n"
