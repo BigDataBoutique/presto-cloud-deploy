@@ -11,18 +11,25 @@ echo "SUPERSET_HOME=$SUPERSET_DATA_PATH" >> /etc/environment
 echo "PYTHONPATH=$SUPERSET_CONFIG_PATH:$PYTHONPATH" >> /etc/environment
 export SUPERSET_HOME=$SUPERSET_DATA_PATH
 
+git clone --depth 1 https://github.com/apache/incubator-superset /tmp/incubator-superset
+
 python3 -m venv $SUPERSET_VENV_PATH
 . $SUPERSET_VENV_PATH/bin/activate
 
 pip install --upgrade setuptools pip
-
-pip install superset gevent # gevent required for gunicorn
+pip install -r /tmp/incubator-superset/requirements.txt \
+            -r /tmp/incubator-superset/requirements-dev.txt \
+            -r /tmp/incubator-superset/contrib/docker/requirements-extra.txt
 
 # See https://github.com/apache/incubator-superset/issues/6770
 pip install pandas==0.23.4
 
 # See https://github.com/apache/incubator-superset/issues/6977
 pip install sqlalchemy==1.2.18
+
+pip install superset gevent
+
+rm -rf /tmp/incubator-superset
 
 cat <<'EOF' >$SUPERSET_CONFIG_PATH/presto-datasource.yaml
 databases:
