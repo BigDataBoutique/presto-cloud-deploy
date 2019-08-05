@@ -20,6 +20,18 @@ sudo -E apt-get install -y -qq --no-install-recommends \
   libsasl2-dev libldap2-dev \
   nginx jq xmlstarlet
 
+log "Generating temporary certificates"
+mkdir -p /opt/certs
+cd /opt/certs
+openssl genrsa -des3 -passout pass:xxxx -out keypair 2048
+openssl rsa -passin pass:xxxx -in keypair -out server.key
+rm keypair
+touch /home/ubuntu/.rnd
+openssl req -new -key server.key -out server.csr -subj "/CN=*"
+openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
+rm server.csr
+cd -
+
 systemctl enable nginx.service
 systemctl stop nginx.service
 
