@@ -1,8 +1,8 @@
 data "aws_vpc" "selected" {
-  id = "${var.vpc_id}"
+  id = var.vpc_id
 }
-
 
 data "aws_subnet" "selected" {
-  id = "${var.subnet_id}"
+  id = var.subnet_id
 }
+
