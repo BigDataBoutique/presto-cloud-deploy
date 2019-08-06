@@ -18,18 +18,14 @@ cd /opt/redash
 sudo -E docker-compose exec -T server ./manage.py users create_root admin@redash admin --password "${admin_password}"
 sudo -E docker-compose exec -T server ./manage.py ds new presto --type presto --options '{"host": "${presto_coordinator_host}", "username": "admin"}'
 
-
-docker-compose down
-sed -i '/^.*nginx:$/,$d' docker-compose.yml # patch out nginx service
-
 # Redash OAuth setup
 # See https://redash.io/help/open-source/admin-guide/google-developer-account-setup
+#docker-compose down
 #cat <<'EOF' >/opt/redash/env
 #REDASH_GOOGLE_CLIENT_ID=#
 #REDASH_GOOGLE_CLIENT_SECRET=#
 #EOF
-
-docker-compose up -d
+#docker-compose up -d
 
 cd -
 

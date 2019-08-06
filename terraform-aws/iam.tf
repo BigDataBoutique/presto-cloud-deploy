@@ -15,11 +15,12 @@ resource "aws_iam_role" "presto-service-role" {
   ]
 }
 EOF
+
 }
 
 resource "aws_iam_role_policy" "presto-service-policy" {
   name = "presto-service-policy"
-  role = "${aws_iam_role.presto-service-role.id}"
+  role = aws_iam_role.presto-service-role.id
 
   policy = <<EOF
 {
@@ -41,10 +42,12 @@ resource "aws_iam_role_policy" "presto-service-policy" {
     }]
 }
 EOF
+
 }
 
 resource "aws_iam_instance_profile" "presto" {
-  name = "presto-${var.environment_name}-instance-profile"
-  path = "/"
-  role = "${aws_iam_role.presto-service-role.name}"
+name = "presto-${var.environment_name}-instance-profile"
+path = "/"
+role = aws_iam_role.presto-service-role.name
 }
+

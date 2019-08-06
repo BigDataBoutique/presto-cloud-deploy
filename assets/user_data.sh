@@ -26,6 +26,7 @@ node.data-dir=/var/lib/presto/
 -XX:ReservedCodeCacheSize=512M
 -Djdk.attach.allowAttachSelf=true
 -Djdk.nio.maxCachedBufferSize=2000000
+-Duser.timezone=UTC
 " > /etc/presto/jvm.config
 
 function setup_hive_metastore {
@@ -159,8 +160,9 @@ if [ ! -z "${aws_access_key_id}" ] && [ ! -z "${aws_secret_access_key}" ]; then
   rm /tmp/hive-site-partial.txt
 
   # Update hive.properties
-  sed -i -E "s/^#hive.s3.aws-access-key.+$/hive.s3.aws-access-key=${aws_access_key_id}/g" /etc/presto/catalog/hive.properties
-  sed -i -E "s/^#hive.s3.aws-secret-key.+$/hive.s3.aws-secret-key=${aws_secret_access_key}/g" /etc/presto/catalog/hive.properties
+  /usr/bin/printf "\nhive.s3.aws-access-key=${aws_access_key_id}" >> /etc/presto/catalog/hive.properties
+  /usr/bin/printf "\nhive.s3.aws-secret-key=${aws_secret_access_key}" >> /etc/presto/catalog/hive.properties
+  /usr/bin/printf "\nhive.allow-drop-table=true" >> /etc/presto/catalog/hive.properties
 fi
 
 echo "Starting presto..."
