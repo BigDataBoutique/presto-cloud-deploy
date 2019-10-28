@@ -140,10 +140,10 @@ echo "Starting presto..."
 systemctl enable presto.service
 systemctl start presto.service
 
-if [[ "${mode_presto}" == "coordinator" ]]; then
+if [[ "${mode_presto}" == "coordinator" ]] || [[ "${mode_presto}" == "coordinator-worker" ]]; then
     echo "Waiting for Presto Coordinator to start"
-    while ! nc -z localhost ${http_port}; do
-      sleep 5
+    while ! presto --execute='select * from system.runtime.nodes'; do
+      sleep 10
     done
     echo "Presto Coordinator is now online"
 fi
