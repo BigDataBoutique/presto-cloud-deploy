@@ -120,6 +120,10 @@ if [ ! -z "${aws_access_key_id}" ] && [ ! -z "${aws_secret_access_key}" ]; then
   # Update hive-site.xml
   /usr/bin/printf "<configuration>
   <property>
+  <name>fs.s3.impl</name>
+  <value>org.apache.hadoop.fs.s3native.NativeS3FileSystem</value>
+  </property>
+  <property>
   <name>fs.s3.awsAccessKeyId</name>
   <value>${aws_access_key_id}</value>
   </property>
