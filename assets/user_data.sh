@@ -149,6 +149,10 @@ if [ ! -z "${aws_access_key_id}" ] && [ ! -z "${aws_secret_access_key}" ]; then
   # Update hive-site.xml
   /usr/bin/printf "<configuration>
   <property>
+  <name>fs.s3.impl</name>
+  <value>org.apache.hadoop.fs.s3native.NativeS3FileSystem</value>
+  </property>
+  <property>
   <name>fs.s3.awsAccessKeyId</name>
   <value>${aws_access_key_id}</value>
   </property>
@@ -169,10 +173,10 @@ echo "Starting presto..."
 systemctl enable presto.service
 systemctl start presto.service
 
-if [[ "${mode_presto}" == "coordinator" ]]; then
+if [[ "${mode_presto}" == "coordinator" ]] || [[ "${mode_presto}" == "coordinator-worker" ]]; then
     echo "Waiting for Presto Coordinator to start"
-    while ! nc -z localhost ${http_port}; do
-      sleep 5
+    while ! presto --execute='select * from system.runtime.nodes'; do
+      sleep 10
     done
     echo "Presto Coordinator is now online"
 fi
