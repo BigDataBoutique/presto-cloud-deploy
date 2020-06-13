@@ -1,7 +1,7 @@
 cd /tmp
-wget https://www-eu.apache.org/dist/zeppelin/zeppelin-0.8.1/zeppelin-0.8.1-bin-all.tgz
+wget https://www-eu.apache.org/dist/zeppelin/zeppelin-0.8.2/zeppelin-0.8.2-bin-all.tgz
 sudo tar xf zeppelin-*-bin-all.tgz -C /opt
-rm zeppelin-0.8.1-bin-all.tgz
+rm zeppelin-0.8.2-bin-all.tgz
 sudo mv /opt/zeppelin-*-bin-all /opt/zeppelin
 sudo cp zeppelin-interpreter-partial.json /opt/zeppelin/conf/zeppelin-interpreter-partial.json
 
