@@ -30,7 +30,10 @@ resource "aws_iam_role_policy" "presto-service-policy" {
         "Resource": "*",
         "Action": [
             "cloudwatch:*",
-            "ec2:DescribeInstances"
+            "ec2:DescribeInstances",
+            "ec2:DescribeTags",
+            "ec2:DescribeVolumes",
+            "ec2:AttachVolume"
         ]
     },
     {

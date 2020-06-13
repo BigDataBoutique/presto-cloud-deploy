@@ -4,6 +4,7 @@ data "template_file" "worker-userdata-script" {
   vars = {
     cloud_provider             = "aws"
     mode_presto                = "worker"
+    aws_region                 = var.aws_region
     heap_size                  = var.worker_heap_size
     memory_size                = var.worker_memory_size
     total_memory_size          = var.worker_memory_size + 3
