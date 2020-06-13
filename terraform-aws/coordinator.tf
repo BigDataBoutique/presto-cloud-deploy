@@ -3,6 +3,7 @@ data "template_file" "coordinator-userdata-script" {
 
   vars = {
     cloud_provider             = "aws"
+    aws_region                 = var.aws_region
     mode_presto                = var.count_workers == "0" && var.count_workers_spot == "0" ? "coordinator-worker" : "coordinator"
     heap_size                  = var.coordinator_heap_size
     memory_size                = var.coordinator_memory_size
@@ -26,7 +27,7 @@ resource "aws_launch_configuration" "coordinator" {
   associate_public_ip_address = var.public_facing
   user_data                   = data.template_file.coordinator-userdata-script.rendered
   key_name                    = var.key_name
-
+  
   lifecycle {
     create_before_destroy = true
   }

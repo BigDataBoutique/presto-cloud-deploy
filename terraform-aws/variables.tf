@@ -22,6 +22,11 @@ variable "key_name" {
   default = "presto"
 }
 
+variable "volume_encryption" {
+  type    = bool
+  default = true
+}
+
 variable "environment_name" {
   description = "The name of the Presto cluster (aka environment)."
   type        = string
