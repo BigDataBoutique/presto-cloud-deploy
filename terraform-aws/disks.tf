@@ -6,7 +6,7 @@ resource "aws_ebs_volume" "coordinator" {
 
   tags = {
     Name              = "presto-${var.environment_name}-coordinator"
-    Environment       = "${var.environment_name}"
+    Environment       = var.environment_name
     PrestoCoordinator = true
   }
 }

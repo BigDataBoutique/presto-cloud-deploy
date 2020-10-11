@@ -34,7 +34,7 @@ resource "aws_launch_configuration" "workers" {
 }
 
 resource "aws_autoscaling_group" "workers" {
-  name                 = "presto-${var.environment_name}-worker"
+  name_prefix          = "presto-${var.environment_name}-worker"
   min_size             = "0"
   max_size             = "999"
   desired_capacity     = var.count_workers

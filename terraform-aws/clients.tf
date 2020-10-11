@@ -148,8 +148,9 @@ resource "aws_lb_listener_rule" "zeppelin-https-clients-websockets-rule" {
   }
 
   condition {
-    field  = "path-pattern"
-    values = ["/ws"]
+    path_pattern {
+      values = ["/ws"]
+    }
   }
 }
 

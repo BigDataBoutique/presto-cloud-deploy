@@ -15,7 +15,7 @@ resource "aws_launch_configuration" "workers-spot" {
 }
 
 resource "aws_autoscaling_group" "workers-spot" {
-  name                 = "presto-${var.environment_name}-worker-spot"
+  name_prefix          = "presto-${var.environment_name}-worker-spot"
   min_size             = "0"
   max_size             = "999"
   desired_capacity     = var.count_workers_spot

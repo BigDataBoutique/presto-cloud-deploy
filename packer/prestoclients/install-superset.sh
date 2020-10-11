@@ -13,6 +13,7 @@ export SUPERSET_HOME=$SUPERSET_DATA_PATH
 
 git clone --depth 1 https://github.com/apache/incubator-superset /tmp/incubator-superset
 
+apt-get install python3-venv
 python3 -m venv $SUPERSET_VENV_PATH
 . $SUPERSET_VENV_PATH/bin/activate
 

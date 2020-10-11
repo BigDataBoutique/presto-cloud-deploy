@@ -8,5 +8,3 @@ cd /opt/redash
 docker-compose down
 sed -i '/^.*nginx:$/,$d' docker-compose.yml # patch out nginx service
 docker-compose up -d
-
-systemctl start nginx.service

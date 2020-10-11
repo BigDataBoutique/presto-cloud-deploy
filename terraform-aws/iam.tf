@@ -1,5 +1,5 @@
 resource "aws_iam_role" "presto-service-role" {
-  name = "presto-service-role"
+  name_prefix = "presto-service-role"
 
   assume_role_policy = <<EOF
 {
@@ -19,7 +19,7 @@ EOF
 }
 
 resource "aws_iam_role_policy" "presto-service-policy" {
-  name = "presto-service-policy"
+  name_prefix = "presto-service-policy"
   role = aws_iam_role.presto-service-role.id
 
   policy = <<EOF
@@ -49,8 +49,7 @@ EOF
 }
 
 resource "aws_iam_instance_profile" "presto" {
-name = "presto-${var.environment_name}-instance-profile"
-path = "/"
-role = aws_iam_role.presto-service-role.name
+  name_prefix = "presto-${var.environment_name}-ip"
+  path = "/"
+  role = aws_iam_role.presto-service-role.name
 }
-
