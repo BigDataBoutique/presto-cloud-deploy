@@ -31,7 +31,7 @@ node.data-dir=/var/lib/presto/
 
 function setup_hive_metastore {
   AV_ZONE="$(ec2metadata --availability-zone)"
-  ENVIRONMENT_NAME="$(aws ec2 describe-tags --region ${aws_region} --filters Name=resource-id,Values=$(ec2metadata --instance-id) | jq -r '.Tags[] | select(.Key == "Environment") | .Value')"
+  ENVIRONMENT_NAME="$(aws ec2 describe-tags --region "${aws_region}" --filters Name=resource-id,Values=$(ec2metadata --instance-id) | jq -r '.Tags[] | select(.Key == "Environment") | .Value')"
   echo "AV_ZONE: $AV_ZONE"
   echo "ENVIRONMENT_NAME: $ENVIRONMENT_NAME"
 
@@ -39,7 +39,7 @@ function setup_hive_metastore {
       UNATTACHED_VOLUME_ID="$(aws ec2 describe-volumes --region ${aws_region} --filters Name=tag:Environment,Values=$ENVIRONMENT_NAME Name=tag:PrestoCoordinator,Values=true Name=availability-zone,Values=$AV_ZONE | jq -r '.Volumes[] | select(.Attachments | length == 0) | .VolumeId' | shuf -n 1)"
       echo "UNATTACHED_VOLUME_ID: $UNATTACHED_VOLUME_ID"
 
-      aws ec2 attach-volume --device "/dev/xvdh" --instance-id=$(ec2metadata --instance-id) --volume-id $UNATTACHED_VOLUME_ID --region "${aws_region}"
+      aws ec2 attach-volume --device "/dev/xvdh" --instance-id=$(ec2metadata --instance-id) --volume-id "$UNATTACHED_VOLUME_ID" --region ${aws_region}
       if [ "$?" != "0" ]; then
           sleep 10
           continue
@@ -47,7 +47,7 @@ function setup_hive_metastore {
 
       sleep 30
 
-      ATTACHMENTS_COUNT="$(aws ec2 describe-volumes --region ${aws_region} --filters Name=volume-id,Values=$UNATTACHED_VOLUME_ID | jq -r '.Volumes[0].Attachments | length')"
+      ATTACHMENTS_COUNT="$(aws ec2 describe-volumes --region "${aws_region}" --filters Name=volume-id,Values="$UNATTACHED_VOLUME_ID" | jq -r '.Volumes[0].Attachments | length')"
       if [ "$ATTACHMENTS_COUNT" != "0" ]; then break; fi
   done
 
@@ -62,12 +62,12 @@ function setup_hive_metastore {
   sudo mv $MOUNT_PATH /tmp/mysql.backup 
   sudo mkdir -p $MOUNT_PATH
 
-  if sudo mount -o defaults -t ext4 $DEVICE_NAME $MOUNT_PATH; then
+  if sudo mount -o defaults -t ext4 "$DEVICE_NAME" $MOUNT_PATH; then
     echo 'Successfully mounted existing disk'
   else
     echo 'Trying to mount a fresh disk'
-    sudo mkfs.ext4 -m 0 -F -E lazy_itable_init=0,lazy_journal_init=0,discard $DEVICE_NAME
-    sudo mount -o defaults -t ext4 $DEVICE_NAME $MOUNT_PATH && echo 'Successfully mounted a fresh disk'
+    sudo mkfs.ext4 -m 0 -F -E lazy_itable_init=0,lazy_journal_init=0,discard "$DEVICE_NAME"
+    sudo mount -o defaults -t ext4 "$DEVICE_NAME" $MOUNT_PATH && echo 'Successfully mounted a fresh disk'
     sudo cp -ar /tmp/mysql.backup/* $MOUNT_PATH/
   fi
 
@@ -80,9 +80,9 @@ function setup_hive_metastore {
   . /etc/environment
   export HADOOP_HOME=$HADOOP_HOME
 
-  if ! $HIVE_HOME/bin/schematool -validate -dbType mysql; then
+  if ! "$HIVE_HOME"/bin/schematool -validate -dbType mysql; then
     echo "Mysql schema is not valid"
-    $HIVE_HOME/bin/schematool -dbType mysql -initSchema
+    "$HIVE_HOME"/bin/schematool -dbType mysql -initSchema
   fi
 
   echo "Initializing Hive Metastore ($HIVE_HOME)..."
@@ -101,17 +101,17 @@ if [[ "${mode_presto}" == "coordinator" ]]; then
 # coordinator
 #
 coordinator=true
-node-scheduler.include-coordinator=false
-http-server.http.port=${http_port}
-query.max-memory=${query_max_memory}
-# query.max-memory-per-node has to be <= query.max-total-memory-per-node
-query.max-memory-per-node=${memory_size}GB
-query.max-total-memory-per-node=${total_memory_size}GB
-node-scheduler.max-splits-per-node=48
-task.max-partial-aggregation-memory=64MB
-query.schedule-split-batch-size=30000
 discovery-server.enabled=true
 discovery.uri=http://localhost:${http_port}
+node-scheduler.include-coordinator=false
+
+http-server.http.port=${http_port}
+# query.max-memory-per-node has to be <= query.max-total-memory-per-node
+query.max-memory-per-node=${query_max_memory_per_node}GB
+query.max-total-memory-per-node=${query_max_total_memory_per_node}GB
+query.max-memory=${query_max_memory}GB
+# query.max-total-memory defaults to query.max-memory * 2 so we are good
+${extra_worker_configs}
 " > /etc/presto/config.properties
 
   setup_hive_metastore
@@ -128,15 +128,16 @@ if [[ "${mode_presto}" == "worker" ]]; then
 # worker
 #
 coordinator=false
-http-server.http.port=${http_port}
-query.max-memory=${query_max_memory}
-query.max-memory-per-node=${memory_size}GB
-query.max-total-memory-per-node=${total_memory_size}GB
-memory.heap-headroom-per-node=8GB
-node-scheduler.max-splits-per-node=48
-task.max-partial-aggregation-memory=64MB
-query.schedule-split-batch-size=30000
 discovery.uri=http://${address_presto_coordinator}:${http_port}
+node-scheduler.include-coordinator=false
+
+http-server.http.port=${http_port}
+# query.max-memory-per-node has to be <= query.max-total-memory-per-node
+query.max-memory-per-node=${query_max_memory_per_node}GB
+query.max-total-memory-per-node=${query_max_total_memory_per_node}GB
+query.max-memory=${query_max_memory}GB
+# query.max-total-memory defaults to query.max-memory * 2 so we are good
+${extra_worker_configs}
 " > /etc/presto/config.properties
 fi
 
@@ -151,12 +152,17 @@ if [[ "${mode_presto}" == "coordinator-worker" ]]; then
 # coordinator-worker
 #
 coordinator=true
-node-scheduler.include-coordinator=true
-http-server.http.port=${http_port}
-query.max-memory=${query_max_memory}
-node-scheduler.max-splits-per-node=24
 discovery-server.enabled=true
 discovery.uri=http://localhost:${http_port}
+node-scheduler.include-coordinator=true
+
+http-server.http.port=${http_port}
+# query.max-memory-per-node has to be <= query.max-total-memory-per-node
+query.max-memory-per-node=${query_max_memory_per_node}GB
+query.max-total-memory-per-node=${query_max_total_memory_per_node}GB
+query.max-memory=${query_max_memory}GB
+# query.max-total-memory defaults to query.max-memory * 2 so we are good
+${extra_worker_configs}
 " > /etc/presto/config.properties
 
   setup_hive_metastore

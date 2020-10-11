@@ -40,8 +40,8 @@ variable "http_port" {
 
 variable "query_max_memory" {
   description = "Total cluster memory a single query may consume. This property may be used to ensure that single query cannot use all resources in cluster. The value should be set to be higher than what typical expected query in system will need."
-  type        = string
-  default     = "500GB"
+  type        = number
+  default     = 500
 }
 
 variable "count_clients" {
@@ -79,7 +79,7 @@ variable "worker_spot_hourly_price" {
 }
 
 variable "coordinator_instance_type" {
-  default = "m5.2xlarge"
+  default = "r5.xlarge"
 }
 
 variable "worker_instance_type" {
@@ -90,27 +90,25 @@ variable "client_instance_type" {
   default = "t2.large"
 }
 
-variable "coordinator_memory_size" {
-  # needs to be heapsize - ~5GB
-  type    = string
-  default = 12
-}
-
 variable "coordinator_heap_size" {
+  # needs to be ~80% of available machine memory
   type    = string
-  default = 24
+  default = 25
 }
 
-variable "worker_memory_size" {
-  # needs to be heapsize - ~5GB
-  type    = string
-  default = 12
-}
 
 variable "worker_heap_size" {
   description = "JVM heap size for workers. Recommended to set to 70% of instance memory"
   type        = string
-  default     = 24 # 75% of available memory
+  default     = 102 # 80% of available memory
+}
+
+variable "extra_worker_configs" {
+  type = "string"
+  default = <<EOF
+task.max-partial-aggregation-memory=64MB
+node-scheduler.max-splits-per-node=1000
+EOF
 }
 
 variable "public_facing" {
@@ -146,4 +144,3 @@ variable "additional_security_groups" {
   type        = list(string)
   default     = []
 }
-

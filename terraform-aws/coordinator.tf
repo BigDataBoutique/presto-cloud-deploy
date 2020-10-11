@@ -3,18 +3,19 @@ data "template_file" "coordinator-userdata-script" {
 
   vars = {
     cloud_provider             = "aws"
+    environment_name           = var.environment_name
     aws_region                 = var.aws_region
+    http_port                  = var.http_port
     mode_presto                = var.count_workers == "0" && var.count_workers_spot == "0" ? "coordinator-worker" : "coordinator"
     heap_size                  = var.coordinator_heap_size
-    memory_size                = var.coordinator_memory_size
-    total_memory_size          = var.coordinator_memory_size + 3
+    query_max_memory_per_node  = ceil(var.worker_heap_size * 0.7)
+    query_max_total_memory_per_node = ceil(var.worker_heap_size * 0.9)
     query_max_memory           = var.query_max_memory
-    environment_name           = var.environment_name
     security_groups            = aws_security_group.presto.id
     aws_access_key_id          = var.aws_access_key_id
     aws_secret_access_key      = var.aws_secret_access_key
-    http_port                  = var.http_port
     address_presto_coordinator = ""
+    extra_worker_configs       = var.extra_worker_configs
   }
 }
 

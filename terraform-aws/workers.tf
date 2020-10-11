@@ -5,16 +5,17 @@ data "template_file" "worker-userdata-script" {
     cloud_provider             = "aws"
     mode_presto                = "worker"
     aws_region                 = var.aws_region
-    heap_size                  = var.worker_heap_size
-    memory_size                = var.worker_memory_size
-    total_memory_size          = var.worker_memory_size + 3
-    query_max_memory           = var.query_max_memory
     environment_name           = var.environment_name
-    security_groups            = aws_security_group.presto.id
-    aws_access_key_id          = var.aws_access_key_id
-    aws_secret_access_key      = var.aws_secret_access_key
     http_port                  = var.http_port
     address_presto_coordinator = aws_elb.coordinator-lb.dns_name
+    security_groups            = aws_security_group.presto.id
+    heap_size                  = var.worker_heap_size
+    query_max_memory_per_node  = ceil(var.worker_heap_size * 0.7)
+    query_max_total_memory_per_node = ceil(var.worker_heap_size * 0.9)
+    query_max_memory           = var.query_max_memory
+    aws_access_key_id          = var.aws_access_key_id
+    aws_secret_access_key      = var.aws_secret_access_key
+    extra_worker_configs       = var.extra_worker_configs
   }
 }
 
