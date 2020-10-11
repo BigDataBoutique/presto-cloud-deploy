@@ -79,11 +79,11 @@ variable "worker_spot_hourly_price" {
 }
 
 variable "coordinator_instance_type" {
-  default = "c5.4xlarge"
+  default = "m5.2xlarge"
 }
 
 variable "worker_instance_type" {
-  default = "c5.4xlarge"
+  default = "r5.4xlarge"
 }
 
 variable "client_instance_type" {
