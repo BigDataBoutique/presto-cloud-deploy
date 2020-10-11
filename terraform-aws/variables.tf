@@ -2,10 +2,10 @@ variable "aws_region" {
   type = string
 }
 
-variable "vpc_id" {
-  description = "VPC ID to create the Presto cluster in"
-  type        = string
-}
+//variable "vpc_id" {
+//  description = "VPC ID to create the Presto cluster in"
+//  type        = string
+//}
 
 variable "subnet_id" {
   description = "The subnets to deploy Presto in"
