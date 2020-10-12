@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -ex
 
 exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 
@@ -106,8 +106,8 @@ node-scheduler.include-coordinator=false
 
 http-server.http.port=${http_port}
 # query.max-memory-per-node has to be <= query.max-total-memory-per-node
-query.max-memory-per-node=${query_max_memory_per_node}GB
-query.max-total-memory-per-node=${query_max_total_memory_per_node}GB
+#query.max-memory-per-node=${query_max_memory_per_node}GB
+#query.max-total-memory-per-node=${query_max_total_memory_per_node}GB
 query.max-memory=${query_max_memory}GB
 # query.max-total-memory defaults to query.max-memory * 2 so we are good
 ${extra_worker_configs}
@@ -132,8 +132,8 @@ node-scheduler.include-coordinator=false
 
 http-server.http.port=${http_port}
 # query.max-memory-per-node has to be <= query.max-total-memory-per-node
-query.max-memory-per-node=${query_max_memory_per_node}GB
-query.max-total-memory-per-node=${query_max_total_memory_per_node}GB
+#query.max-memory-per-node=${query_max_memory_per_node}GB
+#query.max-total-memory-per-node=${query_max_total_memory_per_node}GB
 query.max-memory=${query_max_memory}GB
 # query.max-total-memory defaults to query.max-memory * 2 so we are good
 ${extra_worker_configs}
@@ -157,8 +157,8 @@ node-scheduler.include-coordinator=true
 
 http-server.http.port=${http_port}
 # query.max-memory-per-node has to be <= query.max-total-memory-per-node
-query.max-memory-per-node=${query_max_memory_per_node}GB
-query.max-total-memory-per-node=${query_max_total_memory_per_node}GB
+#query.max-memory-per-node=${query_max_memory_per_node}GB
+#query.max-total-memory-per-node=${query_max_total_memory_per_node}GB
 query.max-memory=${query_max_memory}GB
 # query.max-total-memory defaults to query.max-memory * 2 so we are good
 ${extra_worker_configs}
@@ -193,9 +193,12 @@ if [ ! -z "${aws_access_key_id}" ] && [ ! -z "${aws_secret_access_key}" ]; then
   rm /tmp/hive-site-partial.txt
 
   # Update hive.properties
+  /usr/bin/printf "\nhive.allow-drop-table=true" >> /etc/presto/catalog/hive.properties
+  /usr/bin/printf "\nhive.non-managed-table-writes-enabled=true" >> /etc/presto/catalog/hive.properties
+  /usr/bin/printf "\n#hive.time-zone=UTC" >> /etc/presto/catalog/hive.properties
   /usr/bin/printf "\nhive.s3.aws-access-key=${aws_access_key_id}" >> /etc/presto/catalog/hive.properties
   /usr/bin/printf "\nhive.s3.aws-secret-key=${aws_secret_access_key}" >> /etc/presto/catalog/hive.properties
-  /usr/bin/printf "\nhive.allow-drop-table=true" >> /etc/presto/catalog/hive.properties
+  /usr/bin/printf "\n" >> /etc/presto/catalog/hive.properties
 fi
 
 echo "Starting presto..."

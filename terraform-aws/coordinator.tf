@@ -8,8 +8,8 @@ data "template_file" "coordinator-userdata-script" {
     http_port                  = var.http_port
     mode_presto                = var.count_workers == "0" && var.count_workers_spot == "0" ? "coordinator-worker" : "coordinator"
     heap_size                  = var.coordinator_heap_size
-    query_max_memory_per_node  = ceil(var.worker_heap_size * 0.7)
-    query_max_total_memory_per_node = ceil(var.worker_heap_size * 0.9)
+    query_max_memory_per_node  = ceil(var.worker_heap_size * 0.4)
+    query_max_total_memory_per_node = ceil(var.worker_heap_size * 0.6)
     query_max_memory           = var.query_max_memory
     security_groups            = aws_security_group.presto.id
     aws_access_key_id          = var.aws_access_key_id

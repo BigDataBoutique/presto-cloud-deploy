@@ -10,8 +10,8 @@ data "template_file" "worker-userdata-script" {
     address_presto_coordinator = aws_elb.coordinator-lb.dns_name
     security_groups            = aws_security_group.presto.id
     heap_size                  = var.worker_heap_size
-    query_max_memory_per_node  = ceil(var.worker_heap_size * 0.7)
-    query_max_total_memory_per_node = ceil(var.worker_heap_size * 0.9)
+    query_max_memory_per_node  = ceil(var.worker_heap_size * 0.4)
+    query_max_total_memory_per_node = ceil(var.worker_heap_size * 0.6)
     query_max_memory           = var.query_max_memory
     aws_access_key_id          = var.aws_access_key_id
     aws_secret_access_key      = var.aws_secret_access_key
