@@ -89,6 +89,8 @@ function setup_hive_metastore {
   systemctl enable hive-metastore
 }
 
+/usr/bin/printf "connector.name=tpcds" > /etc/presto/catalog/tpcds.properties
+
 #
 # Configure as COORDINATOR
 #
