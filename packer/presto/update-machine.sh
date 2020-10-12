@@ -18,7 +18,7 @@ sudo -E apt-get upgrade -y -qq
 
 log "Installing prerequisites..."
 sudo -E apt-get install -y -qq --no-install-recommends \
-   wget software-properties-common htop apt-transport-https python3 jq awscli
+   wget software-properties-common htop apt-transport-https python3 jq awscli vim
 
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 10
 
