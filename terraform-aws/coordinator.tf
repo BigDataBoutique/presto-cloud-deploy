@@ -88,7 +88,7 @@ resource "aws_elb" "coordinator-lb" {
     healthy_threshold   = 2
     unhealthy_threshold = 2
     timeout             = 3
-    target              = "HTTP:8080/ui/"
+    target              = "HTTP:8080/ui/login.html"
     interval            = 6
   }
 
