@@ -55,8 +55,7 @@ function setup_hive_metastore {
   sleep 30
 
   # Mount persistent storage and apply Hive Metastore schema if needed
-
-  DEVICE_NAME=$(lsblk -ip | tail -n +2 | awk '{print $1 " " ($7? "MOUNTEDPART" : "") }' | sed ':a;N;$!ba;s/\n`/ /g' | grep -v MOUNTEDPART)
+  DEVICE_NAME=$(lsblk -ip | tail -n +2 | awk '{print $1 " " ($7? "MOUNTEDPART" : "") }' | sed ':a;N;$!ba;s/\n`/ /g' | grep -v MOUNTEDPART | sed -e 's/[[:space:]]*$//')
   MOUNT_PATH=/var/lib/mysql
 
   sudo mv $MOUNT_PATH /tmp/mysql.backup 
