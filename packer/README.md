@@ -90,7 +90,7 @@ az account show --query "{ subscription_id: id }"
 Building the AMIs is done using the following commands:
 
 ```bash
-packer build -only=amazon-ebs -var-file=variables.json presto.packer.json
+packer build -only=amazon-ebs -var-file=variables.json presto.json
 ```
 
 Replace the `-only` parameter to `azure-arm` to build images for Azure instead of AWS.
