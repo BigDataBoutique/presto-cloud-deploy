@@ -93,4 +93,7 @@ Building the AMIs is done using the following commands:
 packer build -only=amazon-ebs -var-file=variables.json presto.json
 ```
 
+Override the aws_region and aws_az variables to change the target region and
+availability zone, which default respectively to us-east-1 and us-east-1a.
+
 Replace the `-only` parameter to `azure-arm` to build images for Azure instead of AWS.
