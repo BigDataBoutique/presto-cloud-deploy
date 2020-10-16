@@ -44,7 +44,7 @@ Response will look something like this:
 }
 ```
 
-Follow up by execting the following
+Follow up by executing the following
 
 ```bash
 aws iam create-instance-profile --instance-profile-name packer
