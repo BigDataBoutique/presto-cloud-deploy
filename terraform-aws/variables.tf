@@ -104,7 +104,7 @@ variable "worker_heap_size" {
 }
 
 variable "extra_worker_configs" {
-  type = "string"
+  type = string
   default = <<EOF
 task.max-partial-aggregation-memory=64MB
 node-scheduler.max-splits-per-node=1000
