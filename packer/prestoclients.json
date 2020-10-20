@@ -30,6 +30,7 @@
         ],
         "ssh_timeout": "10m",
         "ssh_username": "ubuntu",
+        "ssh_interface": "public_ip",
         "tags": {
           "ImageType": "prestoclients-packer-image"
         },
