@@ -1,5 +1,6 @@
 variable "aws_region" {
   type = string
+  default = "eu-west-1"
 }
 
 //variable "vpc_id" {
@@ -8,14 +9,15 @@ variable "aws_region" {
 //}
 
 variable "subnet_id" {
-  description = "The subnets to deploy Presto in"
+  description = "The subnet to deploy Presto in"
   type        = string
+  default = "subnet-31665779"
 }
 
 variable "clients_lb_subnets" {
   description = "A list of subnet IDs to attach to the clients LB"
   type        = list(string)
-  default     = []
+  default     = ["subnet-31665779", "subnet-31665779", "subnet-31665779"]
 }
 
 variable "key_name" {
@@ -30,6 +32,7 @@ variable "volume_encryption" {
 variable "environment_name" {
   description = "The name of the Presto cluster (aka environment)."
   type        = string
+  default = "heypresto"
 }
 
 variable "http_port" {
@@ -47,7 +50,7 @@ variable "query_max_memory" {
 variable "count_clients" {
   description = "Number of nodes with Apache Superset and Redash installed."
   type        = string
-  default     = 0
+  default     = 1
 }
 
 variable "clients_use_spot" {
@@ -112,7 +115,7 @@ EOF
 }
 
 variable "public_facing" {
-  default = "false"
+  default = "true"
 }
 
 variable "s3_buckets" {
@@ -136,7 +139,7 @@ variable "aws_secret_access_key" {
 variable "allow_cidr_blocks" {
   description = "Additional CIDR blocks to allow access to the Presto UI from"
   type        = list(string)
-  default     = []
+  default     = ["0.0.0.0/0"]
 }
 
 variable "additional_security_groups" {
