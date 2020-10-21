@@ -2,20 +2,9 @@ variable "aws_region" {
   type = string
 }
 
-//variable "vpc_id" {
-//  description = "VPC ID to create the Presto cluster in"
-//  type        = string
-//}
-
-variable "subnet_id" {
-  description = "The subnets to deploy Presto in"
-  type        = string
-}
-
-variable "clients_lb_subnets" {
-  description = "A list of subnet IDs to attach to the clients LB"
+variable "subnet_ids" {
+  description = "The subnets to deploy Presto in. At least two subnets must be in different availability zones. All subnets must be in the same VPC."
   type        = list(string)
-  default     = []
 }
 
 variable "key_name" {

@@ -40,7 +40,7 @@ resource "aws_autoscaling_group" "coordinator" {
   max_size             = "1"
   desired_capacity     = "1"
   launch_configuration = aws_launch_configuration.coordinator.id
-  vpc_zone_identifier = [var.subnet_id]
+  vpc_zone_identifier = [for s in data.aws_subnet.subnets : s.id]
 
   load_balancers = [aws_elb.coordinator-lb.id]
 
@@ -71,7 +71,7 @@ resource "aws_elb" "coordinator-lb" {
     [aws_security_group.presto.id],
     var.additional_security_groups,
   )
-  subnets  = [var.subnet_id]
+  subnets  = [for s in data.aws_subnet.subnets : s.id]
   internal = var.public_facing == "true" ? "false" : "true"
 
   cross_zone_load_balancing = false

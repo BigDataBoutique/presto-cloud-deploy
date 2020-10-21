@@ -1,5 +1,5 @@
 resource "aws_ebs_volume" "coordinator" {
-  availability_zone = data.aws_subnet.selected.availability_zone
+  availability_zone = data.aws_subnet.main_subnet.availability_zone
   size              = 10
   type              = "gp2"
   encrypted         = var.volume_encryption

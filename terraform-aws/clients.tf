@@ -54,7 +54,7 @@ resource "aws_lb_target_group" "redash-https-clients" {
   name     = "redash-https-clients-tg"
   port     = "8500"
   protocol = "HTTPS"
-  vpc_id   = data.aws_subnet.selected.vpc_id
+  vpc_id   = data.aws_subnet.main_subnet.vpc_id
 
   stickiness {
     type = "lb_cookie"
@@ -85,7 +85,7 @@ resource "aws_lb_target_group" "superset-https-clients" {
   name     = "superset-https-clients-tg"
   port     = "8600"
   protocol = "HTTPS"
-  vpc_id   = data.aws_subnet.selected.vpc_id
+  vpc_id   = data.aws_subnet.main_subnet.vpc_id
 
   stickiness {
     type = "lb_cookie"
@@ -116,7 +116,7 @@ resource "aws_lb_target_group" "zeppelin-https-clients" {
   name     = "zeppelin-https-clients-tg"
   port     = "8700"
   protocol = "HTTPS"
-  vpc_id   = data.aws_subnet.selected.vpc_id
+  vpc_id   = data.aws_subnet.main_subnet.vpc_id
 
   stickiness {
     type = "lb_cookie"
@@ -165,7 +165,7 @@ resource "aws_lb" "clients-lb" {
     var.additional_security_groups,
   )
 
-  subnets = split(",", join(",", var.clients_lb_subnets))
+  subnets = [for s in data.aws_subnet.subnets : s.id]
 
   idle_timeout = 400
 
@@ -201,7 +201,7 @@ resource "aws_autoscaling_group" "clients" {
   max_size             = "999"
   desired_capacity     = var.count_clients
   launch_configuration = aws_launch_configuration.clients[0].id
-  vpc_zone_identifier = [var.subnet_id]
+  vpc_zone_identifier = [for s in data.aws_subnet.subnets : s.id]
   target_group_arns = [
     aws_lb_target_group.redash-https-clients.arn,
     aws_lb_target_group.superset-https-clients.arn,
