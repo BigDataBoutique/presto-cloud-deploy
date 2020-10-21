@@ -26,7 +26,6 @@
       "tags": {
         "ImageType": "presto-packer-image"
       },
-      "spot_price_auto_product": "Linux/UNIX (Amazon VPC)",
       "spot_price": "auto"
     },
     {
