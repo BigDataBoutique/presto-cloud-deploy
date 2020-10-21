@@ -6,6 +6,9 @@ This Packer configuration will generate Ubuntu images with Presto and Presto CLI
 
 Using the AWS builder will create the two images and store them as AMIs.
 
+The base AMI is maintained by [Canonical](https://canonical.com/) and listed on
+the [Amazon EC2 AMI Locator](https://cloud-images.ubuntu.com/locator/ec2/).
+
 As a convention the Packer builders will use a dedicated IAM roles, which you will need to have present.
 
 ```bash
