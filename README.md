@@ -87,18 +87,22 @@ msck repair table elb_logs_pq;
 
 This will create a partitioned "external" Hive table with data on S3. Once done, you can query it via Hive, or you can logout of Hive and query it via the Presto CLI:
 
+```sql
+SELECT elb_name,
+    sum(case elb_response_code
+    WHEN '200' THEN
+    1
+    ELSE 0 end) AS uptime, sum(case elb_response_code
+    WHEN '404' THEN
+    1
+    ELSE 0 end) AS downtime
+FROM elb_logs_pq
+GROUP BY  elb_name;
+```
+
 ```bash
 ubuntu@ip-172-31-32-64:~$ presto --catalog hive --schema default
-presto:default> SELECT elb_name,
-             ->         sum(case elb_response_code
-             ->         WHEN '200' THEN
-             ->         1
-             ->         ELSE 0 end) AS uptime, sum(case elb_response_code
-             ->         WHEN '404' THEN
-             ->         1
-             ->         ELSE 0 end) AS downtime
-             ->     FROM elb_logs_pq
-             ->     GROUP BY  elb_name;
+presto:default> [paste query copied from above]
 
    elb_name   |  uptime   | downtime 
 --------------+-----------+----------
@@ -117,4 +121,3 @@ Query 20180810_121913_00002_s3bz8, FINISHED, 3 nodes
 Splits: 2,418 total, 2,418 done (100.00%)
 0:53 [3.84B rows, 2.51GB] [71.7M rows/s, 48MB/s]
 ```
-
