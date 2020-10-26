@@ -2,7 +2,9 @@
 
 ## Create the AMIs with Packer
 
-Go to the packer folder and see the README there. Once you have the AMI ID, return here and continue with the next steps.
+Go to the packer folder and see the README there. Once you have the generated an
+AMI for the presto instance and the prestoclient instance, return here and
+continue with the next steps.
 
 ## Create key-pair
 
@@ -26,15 +28,21 @@ configure the load balancer.
 
 ## Configurations
 
-Edit `variables.tf` to specify the following:
+The most important variables specified in `variables.tf` are the following:
 
-* `aws_region` - the region where to launch the cluster in.
-* `key_name` - the name of the key to use - that key needs to be handy so you can access the machines if needed.
-* `vpc_id` - the ID of the VPC to launch the cluster in.
+* `aws_region` - the region in which to launch the cluster.
+* `key_name` - the name of the key pair for root SSH access to the EC2 instance. You can use the one created earlier.
+* `subnet_ids` - the IDs of the VPC to launch the cluster in, as described above.
 * `public_facing` - whether or not the coordinator node should be open to the internet. The default and the highly recommended value is `false`.
 * `additional_security_groups` - here you add IDs for security groups you want to add to the coordinator load balancer so your clients (e.g. Redash, applications, etc) can access the coordinator for querying.
 * `count_clients` - number of client nodes with Redash and Apache Superset installed, with configured admin user and datasource pointing to the Presto cluster. Default is `0`.
 * `clients_lb_subnets` - list of subnet IDs to attach to the clients load balancer. At least two subnets from different availability zones must be provided.
+
+We recommend using `tfvars` file to override all variables and configurations,
+see https://www.terraform.io/intro/getting-started/variables.html#from-a-file
+for more details.
+
+You must create at least one client to generate the credentials to access the Presto UI.
 
 You can launch workers and spot-workers (workers which run on spot-instances).
 
@@ -72,10 +80,23 @@ State path: terraform.tfstate
 
 Outputs:
 
-coordinator-lb-dns = internal-test-presto-lb-963348710.eu-central-1.elb.amazonaws.com
+clients-admin-password = [
+  "********",
+]
+clients-lb-dns = [
+  "example-presto-client-lb-1234567890.eu-west-1.elb.amazonaws.com",
+]
+coordinator-lb-dns = [
+  "example-presto-lb-1234567890.eu-west-1.elb.amazonaws.com",
+]
 ```
 
-Note `coordinator-lb-dns` - that's your entry point to the Presto cluster. All queries should go to that URL, and the Presto UI accessible at that address as well (port 8080). 
+Note `coordinator-lb-dns` - that's your entry point to the Presto cluster. All
+queries should go to that URL, and the Presto UI accessible at that address as
+well (port 8080).
+
+To enter the UI you pass the `clients-admin-password` as the user name and don't
+set a password.
 
 ### Look around
 
