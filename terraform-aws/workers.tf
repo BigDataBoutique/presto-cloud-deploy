@@ -40,7 +40,7 @@ resource "aws_autoscaling_group" "workers" {
   max_size             = "999"
   desired_capacity     = var.count_workers
   launch_configuration = aws_launch_configuration.workers.id
-  vpc_zone_identifier = [for s in data.aws_subnet.subnets : s.id]
+  availability_zones = aws_autoscaling_group.coordinator.availability_zones
 
   tag {
     key                 = "Name"

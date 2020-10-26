@@ -14,7 +14,15 @@ aws ec2 create-key-pair --key-name presto --query 'KeyMaterial' --output text > 
 
 The Presto cluster is going to be deployed in a single subnet, within a single VPC, in a single availability zone. The idea behind this decision is to reduce latency and costs associated with transferring data between networks and AZs. Since Presto is usually used for non-mission critical parts of a system, this is usually acceptable.
 
-Create a VPC or use an existing one, and get it. You will need the VPC ID we will use the available subnets within it. 
+A load balancer is placed in front of the the Presto cluster and another in
+front of the Presto clients. To create a load balancer you need to associate it
+with two subnets of the same VPC in distinct availability zones, even if one of
+the availability zones is never used.
+
+Create a VPC or use an existing one. Make a list of least two subnet IDs in
+distinct availability zones. The first subnet in the list will be used to deploy
+the Presto cluster and related resources. The subsequent subnets will be used to
+configure the load balancer.
 
 ## Configurations
 
