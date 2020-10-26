@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -ex
 
-# exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 
 cat <<'EOF' >/etc/security/limits.d/100-presto-nofile.conf
 presto soft nofile 16384
@@ -40,7 +40,6 @@ function setup_hive_metastore {
       echo "UNATTACHED_VOLUME_ID: $UNATTACHED_VOLUME_ID"
 
       aws ec2 attach-volume --device "/dev/xvdh" --instance-id=$(ec2metadata --instance-id) --volume-id "$UNATTACHED_VOLUME_ID" --region ${aws_region}
-      # FIXME: This check is incompatible with bash's -e option. The attach-volume call either immediately succeeds or fails the whole script.
       if [ "$?" != "0" ]; then
           sleep 10
           continue
