@@ -24,8 +24,6 @@ Clone this repo to work locally. You might want to fork it in case you need to a
 
 Create images with Packer (see `packer` folder in this repo), and then go into the terraform folder and run `terraform init`. See README files in each respective folder for more detailed instructions. 
 
-We recommend using `tfvars` file for all variables and configurations, see https://www.terraform.io/intro/getting-started/variables.html#from-a-file for more details.
-
 Once you run `terraform apply` on any of the terraform folders in this repo, a file `terraform.tfstate` will be created. This file contains the mapping between your cloud elements to the terraform configuration. Make sure to keep this file safe.
   
 See [this guide](https://blog.gruntwork.io/how-to-manage-terraform-state-28f5697e68fa#.fbb2nalw6) for a discussion on `tfstate` management and locking between team members. We highly recommend using dedicated backends for real-world clusters to avoid state loss.
