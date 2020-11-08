@@ -24,8 +24,6 @@ Clone this repo to work locally. You might want to fork it in case you need to a
 
 Create images with Packer (see `packer` folder in this repo), and then go into the terraform folder and run `terraform init`. See README files in each respective folder for more detailed instructions. 
 
-We recommend using `tfvars` file for all variables and configurations, see https://www.terraform.io/intro/getting-started/variables.html#from-a-file for more details.
-
 Once you run `terraform apply` on any of the terraform folders in this repo, a file `terraform.tfstate` will be created. This file contains the mapping between your cloud elements to the terraform configuration. Make sure to keep this file safe.
   
 See [this guide](https://blog.gruntwork.io/how-to-manage-terraform-state-28f5697e68fa#.fbb2nalw6) for a discussion on `tfstate` management and locking between team members. We highly recommend using dedicated backends for real-world clusters to avoid state loss.
@@ -87,18 +85,22 @@ msck repair table elb_logs_pq;
 
 This will create a partitioned "external" Hive table with data on S3. Once done, you can query it via Hive, or you can logout of Hive and query it via the Presto CLI:
 
+```sql
+SELECT elb_name,
+    sum(case elb_response_code
+    WHEN '200' THEN
+    1
+    ELSE 0 end) AS uptime, sum(case elb_response_code
+    WHEN '404' THEN
+    1
+    ELSE 0 end) AS downtime
+FROM elb_logs_pq
+GROUP BY  elb_name;
+```
+
 ```bash
 ubuntu@ip-172-31-32-64:~$ presto --catalog hive --schema default
-presto:default> SELECT elb_name,
-             ->         sum(case elb_response_code
-             ->         WHEN '200' THEN
-             ->         1
-             ->         ELSE 0 end) AS uptime, sum(case elb_response_code
-             ->         WHEN '404' THEN
-             ->         1
-             ->         ELSE 0 end) AS downtime
-             ->     FROM elb_logs_pq
-             ->     GROUP BY  elb_name;
+presto:default> [paste query copied from above]
 
    elb_name   |  uptime   | downtime 
 --------------+-----------+----------
@@ -117,4 +119,3 @@ Query 20180810_121913_00002_s3bz8, FINISHED, 3 nodes
 Splits: 2,418 total, 2,418 done (100.00%)
 0:53 [3.84B rows, 2.51GB] [71.7M rows/s, 48MB/s]
 ```
-

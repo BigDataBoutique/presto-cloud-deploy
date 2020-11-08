@@ -20,7 +20,7 @@ resource "aws_autoscaling_group" "workers-spot" {
   max_size             = "999"
   desired_capacity     = var.count_workers_spot
   launch_configuration = aws_launch_configuration.workers-spot.id
-  vpc_zone_identifier = [var.subnet_id]
+  vpc_zone_identifier = [for s in data.aws_subnet.subnets : s.id]
 
   tag {
     key                 = "Name"

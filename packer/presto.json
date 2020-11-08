@@ -14,7 +14,7 @@
       "source_ami_filter": {
         "filters": {
           "virtualization-type": "hvm",
-          "name": "*ubuntu-bionic-18.04-amd64-server-*",
+          "name": "ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*",
           "root-device-type": "ebs"
         },
         "owners": ["099720109477"],
@@ -22,10 +22,10 @@
       },
       "ssh_timeout": "10m",
       "ssh_username": "ubuntu",
+      "ssh_interface": "public_ip",
       "tags": {
         "ImageType": "presto-packer-image"
       },
-      "spot_price_auto_product": "Linux/UNIX (Amazon VPC)",
       "spot_price": "auto"
     },
     {

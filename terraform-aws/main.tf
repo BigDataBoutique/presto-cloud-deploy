@@ -35,7 +35,7 @@ data "aws_ami" "presto-clients" {
 resource "aws_security_group" "presto-clients" {
   name        = "presto-clients-${var.environment_name}-clients-security-group"
   description = "Presto clients access"
-  vpc_id      = data.aws_subnet.selected.vpc_id
+  vpc_id      = data.aws_subnet.main_subnet.vpc_id
 
   tags = {
     Name        = "presto-clients-${var.environment_name}"
@@ -84,7 +84,7 @@ resource "aws_security_group" "presto-clients" {
 resource "aws_security_group" "presto" {
   name        = "presto-${var.environment_name}-clients-security-group"
   description = "Presto access"
-  vpc_id      = data.aws_subnet.selected.vpc_id
+  vpc_id      = data.aws_subnet.main_subnet.vpc_id
 
   tags = {
     Name        = "presto-${var.environment_name}"
@@ -105,7 +105,7 @@ resource "aws_security_group" "presto" {
     protocol  = "tcp"
     cidr_blocks = concat(
       [
-        var.public_facing ? "0.0.0.0/0" : data.aws_subnet.selected.cidr_block,
+        var.public_facing ? "0.0.0.0/0" : data.aws_subnet.main_subnet.cidr_block,
       ],
       var.allow_cidr_blocks,
     )

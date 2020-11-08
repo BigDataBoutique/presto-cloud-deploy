@@ -6,6 +6,9 @@ This Packer configuration will generate Ubuntu images with Presto and Presto CLI
 
 Using the AWS builder will create the two images and store them as AMIs.
 
+The base AMI is maintained by [Canonical](https://canonical.com/) and listed on
+the [Amazon EC2 AMI Locator](https://cloud-images.ubuntu.com/locator/ec2/).
+
 As a convention the Packer builders will use a dedicated IAM roles, which you will need to have present.
 
 ```bash
@@ -44,7 +47,7 @@ Response will look something like this:
 }
 ```
 
-Follow up by execting the following
+Follow up by executing the following
 
 ```bash
 aws iam create-instance-profile --instance-profile-name packer
@@ -90,7 +93,10 @@ az account show --query "{ subscription_id: id }"
 Building the AMIs is done using the following commands:
 
 ```bash
-packer build -only=amazon-ebs -var-file=variables.json presto.packer.json
+packer build -only=amazon-ebs -var-file=variables.json presto.json
 ```
+
+Override the aws_region and aws_az variables to change the target region and
+availability zone, which default respectively to us-east-1 and us-east-1a.
 
 Replace the `-only` parameter to `azure-arm` to build images for Azure instead of AWS.
