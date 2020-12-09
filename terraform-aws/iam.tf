@@ -20,7 +20,7 @@ EOF
 
 resource "aws_iam_role_policy" "presto-service-policy" {
   name_prefix = "presto-service-policy"
-  role = aws_iam_role.presto-service-role.id
+  role        = aws_iam_role.presto-service-role.id
 
   policy = <<EOF
 {
@@ -42,7 +42,29 @@ resource "aws_iam_role_policy" "presto-service-policy" {
             "s3:*"
         ],
         "Resource": ${jsonencode(var.s3_buckets)}
-    }]
+    },
+    {
+        "Effect": "Allow",
+        "Action": [
+            "glue:CreatePartition",
+            "glue:CreateTable",
+            "glue:DeleteTable",
+            "glue:GetDatabase",
+            "glue:GetDatabases",
+            "glue:GetPartition",
+            "glue:GetPartitions",
+            "glue:GetTable",
+            "glue:GetTableVersions",
+            "glue:GetTables",
+            "glue:CreateBookmark",
+            "glue:GetBookmark",
+            "glue:UpdateBookmark",
+            "glue:GetConnection",
+            "glue:GetConnections"
+        ],
+        "Resource": "*"
+    }
+  ]
 }
 EOF
 
@@ -50,6 +72,6 @@ EOF
 
 resource "aws_iam_instance_profile" "presto" {
   name_prefix = "presto-${var.environment_name}-ip"
-  path = "/"
-  role = aws_iam_role.presto-service-role.name
+  path        = "/"
+  role        = aws_iam_role.presto-service-role.name
 }
