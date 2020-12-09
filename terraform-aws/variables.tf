@@ -64,7 +64,7 @@ variable "count_workers_spot" {
 
 variable "worker_spot_hourly_price" {
   type    = string
-  default = "0.30"
+  default = "0.99"
 }
 
 variable "coordinator_instance_type" {
