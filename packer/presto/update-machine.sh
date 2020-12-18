@@ -11,10 +11,13 @@ TZ=Etc/UTC
 ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 log "Updating package index..."
-sudo -E apt-get update -qq
+sudo -E apt-get update -y -qq
 
 log "Upgrading existing packages"
 sudo -E apt-get upgrade -y -qq
+
+log "Updating package index..."
+sudo -E apt-get update -y -qq
 
 log "Installing prerequisites..."
 sudo -E apt-get install -y -qq --no-install-recommends \

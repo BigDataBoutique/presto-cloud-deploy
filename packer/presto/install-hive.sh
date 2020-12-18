@@ -14,12 +14,12 @@ export path_hadoop_file="hadoop-${HADOOP_VERSION}.tar.gz"
 export HADOOP_HOME=${path_hadoop}
 
 log "Downloading Hadoop ${HADOOP_VERSION}..."
-wget -q -O ${path_hadoop_file} http://mirrors.sonic.net/apache/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz
+wget -q -O ${path_hadoop_file} https://archive.apache.org/dist/hadoop/core/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz
 tar -xzf ${path_hadoop_file} -C /usr/local/
 rm ${path_hadoop_file}
 
 log "Downloading Hive ${HIVE_VERSION}..."
-wget -q -O ${path_file} http://mirrors.sonic.net/apache/hive/hive-${HIVE_VERSION}/apache-hive-${HIVE_VERSION}-bin.tar.gz
+wget -q -O ${path_file} https://archive.apache.org/dist/hive/hive-${HIVE_VERSION}/apache-hive-${HIVE_VERSION}-bin.tar.gz
 
 log "Installing Hive..."
 useradd -m hive || log "User [hive] already exists. Continuing..."
