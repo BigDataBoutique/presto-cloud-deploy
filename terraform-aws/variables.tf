@@ -133,3 +133,9 @@ variable "additional_security_groups" {
   type        = list(string)
   default     = []
 }
+
+variable "additional_bootstrap_scripts" {
+  description = "Additional scripts to run on the nodes as they are being bootstrapped"
+  type        = list(string)
+  default     = []
+}
