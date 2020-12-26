@@ -1,22 +1,22 @@
 data "template_file" "coordinator-userdata-script" {
-  template = file("${path.module}/../assets/user_data.sh")
-
-  vars = {
-    cloud_provider             = "aws"
-    environment_name           = var.environment_name
-    aws_region                 = var.aws_region
-    http_port                  = var.http_port
-    mode_presto                = var.count_workers == "0" && var.count_workers_spot == "0" ? "coordinator-worker" : "coordinator"
-    heap_size                  = var.coordinator_heap_size
-    query_max_memory_per_node  = ceil(var.worker_heap_size * 0.4)
+  template = templatefile("${path.module}/../assets/user_data.sh", {
+    cloud_provider                  = "aws"
+    environment_name                = var.environment_name
+    aws_region                      = var.aws_region
+    http_port                       = var.http_port
+    mode_presto                     = var.count_workers == "0" && var.count_workers_spot == "0" ? "coordinator-worker" : "coordinator"
+    heap_size                       = var.coordinator_heap_size
+    query_max_memory_per_node       = ceil(var.worker_heap_size * 0.4)
     query_max_total_memory_per_node = ceil(var.worker_heap_size * 0.6)
-    query_max_memory           = var.query_max_memory
-    security_groups            = aws_security_group.presto.id
-    aws_access_key_id          = var.aws_access_key_id
-    aws_secret_access_key      = var.aws_secret_access_key
-    address_presto_coordinator = ""
-    extra_worker_configs       = var.extra_worker_configs
-  }
+    query_max_memory                = var.query_max_memory
+    security_groups                 = aws_security_group.presto.id
+    aws_access_key_id               = var.aws_access_key_id
+    aws_secret_access_key           = var.aws_secret_access_key
+    address_presto_coordinator      = ""
+    extra_worker_configs            = var.extra_worker_configs
+    additional_bootstrap_scripts    = var.additional_bootstrap_scripts
+
+  })
 }
 
 resource "aws_launch_configuration" "coordinator" {

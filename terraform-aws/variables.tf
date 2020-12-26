@@ -136,6 +136,6 @@ variable "additional_security_groups" {
 
 variable "additional_bootstrap_scripts" {
   description = "Additional scripts to run on the nodes as they are being bootstrapped"
-  type        = list(string)
+  type        = list(object({script_url = string, type = string, script_name = string, params = list(string)}))
   default     = []
 }

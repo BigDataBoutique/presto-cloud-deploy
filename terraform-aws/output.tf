@@ -10,3 +10,6 @@ output "clients-admin-password" {
   value = random_string.clients-admin-password.*.result
 }
 
+output "script" {
+  value = data.template_file.worker-userdata-script.rendered
+}
