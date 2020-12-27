@@ -30,8 +30,7 @@ resource "aws_launch_configuration" "workers" {
   name_prefix                 = "presto-${var.environment_name}-worker"
   image_id                    = data.aws_ami.presto.id
   instance_type               = var.worker_instance_type
-  security_groups             = [
-    aws_security_group.presto.id]
+  security_groups             = [aws_security_group.presto.id]
   iam_instance_profile        = aws_iam_instance_profile.presto.id
   associate_public_ip_address = false
   user_data                   = data.template_file.worker-userdata-script.rendered

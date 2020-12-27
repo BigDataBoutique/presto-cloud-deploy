@@ -219,11 +219,17 @@ fi
 
 
 %{ for script in additional_bootstrap_scripts ~}
-%{ if script.type == "s3" ~}
-aws s3 cp ${script.script_url} /tmp/${script.script_name}
-%{ else ~}
-curl ${script.script_url} -o /tmp/${script.script_name}
-%{ endif ~}
+  %{ if script.type == "s3" ~}
+    if [ ! -z "${aws_access_key_id}" ]; then
+      export AWS_ACCESS_KEY_ID=${aws_access_key_id}
+      export AWS_SECRET_ACCESS_KEY=${aws_secret_access_key}
+    fi
+    aws s3 cp ${script.script_url} /tmp/${script.script_name}
+  %{ else ~}
+    curl ${script.script_url} -o /tmp/${script.script_name}
+  %{ endif ~}
+  chmod +x /tmp/${script.script_name} 
+  sh -c "/tmp/${script.script_name} %{ for param in script.params ~} ${param} %{ endfor ~}"
+%{ endfor ~}
 
-sh -c "/tmp/${script.script_name} %{ for param in script.params ~} ${param}%{ endfor ~}"
-
+systemctl restart presto

@@ -134,8 +134,25 @@ variable "additional_security_groups" {
   default     = []
 }
 
+# Example usage
+# additional_bootstrap_scripts = [
+#   {
+#     script_url = "s3://path/to/script/setup-custom-plugin.sh"
+#     type = "s3"
+#     script_name = "setup-plugin.sh"
+#     params = [
+#       "--arg1", "val1",
+#       "--arg2", "val2",
+#     ]
+#   }
+# ]
 variable "additional_bootstrap_scripts" {
   description = "Additional scripts to run on the nodes as they are being bootstrapped"
-  type        = list(object({script_url = string, type = string, script_name = string, params = list(string)}))
+  type        = list(object({
+    script_url = string,
+    type = string,
+    script_name = string,
+    params = list(string)
+  }))
   default     = []
 }
