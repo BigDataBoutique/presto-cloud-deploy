@@ -1,23 +1,30 @@
 data "template_file" "worker-userdata-script" {
-  template = file("${path.module}/../assets/user_data.sh")
-
-  vars = {
-    cloud_provider             = "aws"
-    mode_presto                = "worker"
-    aws_region                 = var.aws_region
-    environment_name           = var.environment_name
-    http_port                  = var.http_port
-    address_presto_coordinator = aws_elb.coordinator-lb.dns_name
-    security_groups            = aws_security_group.presto.id
-    heap_size                  = var.worker_heap_size
-    query_max_memory_per_node  = ceil(var.worker_heap_size * 0.4)
+  template = templatefile("${path.module}/../assets/user_data.sh", {
+    cloud_provider                  = "aws"
+    mode_presto                     = "worker"
+    aws_region                      = var.aws_region
+    environment_name                = var.environment_name
+    http_port                       = var.http_port
+    address_presto_coordinator      = aws_elb.coordinator-lb.dns_name
+    security_groups                 = aws_security_group.presto.id
+    heap_size                       = var.worker_heap_size
+    query_max_memory_per_node       = ceil(var.worker_heap_size * 0.4)
     query_max_total_memory_per_node = ceil(var.worker_heap_size * 0.6)
-    query_max_memory           = var.query_max_memory
-    aws_access_key_id          = var.aws_access_key_id
-    aws_secret_access_key      = var.aws_secret_access_key
-    extra_worker_configs       = var.extra_worker_configs
+    query_max_memory                = var.query_max_memory
+    aws_access_key_id               = var.aws_access_key_id
+    aws_secret_access_key           = var.aws_secret_access_key
+    extra_worker_configs            = var.extra_worker_configs
+    additional_bootstrap_scripts    = var.additional_bootstrap_scripts
+  })
+}
+
+
+resource "null_resource" "render-template" {
+  triggers = {
+    json = data.template_file.worker-userdata-script.rendered
   }
 }
+
 
 resource "aws_launch_configuration" "workers" {
   name_prefix                 = "presto-${var.environment_name}-worker"
@@ -40,7 +47,7 @@ resource "aws_autoscaling_group" "workers" {
   max_size             = "999"
   desired_capacity     = var.count_workers
   launch_configuration = aws_launch_configuration.workers.id
-  availability_zones = aws_autoscaling_group.coordinator.availability_zones
+  availability_zones   = aws_autoscaling_group.coordinator.availability_zones
 
   tag {
     key                 = "Name"
