@@ -9,3 +9,4 @@ output "clients-lb-dns" {
 output "clients-admin-password" {
   value = random_string.clients-admin-password.*.result
 }
+

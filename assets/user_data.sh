@@ -213,6 +213,8 @@ if [[ "${mode_presto}" == "coordinator" ]] || [[ "${mode_presto}" == "coordinato
     echo "Presto Coordinator is now online"
 fi
 
+echo "Executing additional bootstrap scripts"
+
 %{ for script in additional_bootstrap_scripts ~}
   %{ if script.type == "s3" ~}
     if [ ! -z "${aws_access_key_id}" ]; then
@@ -226,5 +228,7 @@ fi
   chmod +x "/tmp/${script.script_name}"
   sh -c "/tmp/${script.script_name} %{ for param in script.params ~} ${param} %{ endfor ~}"
 %{ endfor ~}
+
+echo "Restarting Presto service"
 
 systemctl restart presto
