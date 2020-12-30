@@ -29,6 +29,11 @@ rm -rf ./presto-catalogs
 rm -rf "$path_install/etc"
 ln -s /etc/presto/ "$path_install/etc"
 
+log "Adding PRESTO_HOME to system profile"
+/usr/bin/printf "export PRESTO_HOME=\"${path_install}\"" >> /etc/profile.d/presto.sh
+
+
+
 /usr/bin/printf "PRESTO_OPTS= \
 --pid-file=${pid_file} \
 --node-config=/etc/presto/node.properties \
