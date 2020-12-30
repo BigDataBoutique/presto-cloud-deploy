@@ -26,6 +26,8 @@ install -d -o ${user_presto} -g ${user_presto} /var/lib/presto/ # this is the da
 install -d -o ${user_presto} -g ${user_presto} /var/log/presto/
 mv ./presto-catalogs/* /etc/presto/catalog/
 rm -rf ./presto-catalogs
+rm -rf "$path_install/etc"
+ln -s /etc/presto/ "$path_install/etc"
 
 /usr/bin/printf "PRESTO_OPTS= \
 --pid-file=${pid_file} \
