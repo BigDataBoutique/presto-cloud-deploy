@@ -8,7 +8,7 @@ variable "subnet_ids" {
 }
 
 variable "key_name" {
-  default = "presto"
+  default = "office-key"
 }
 
 variable "volume_encryption" {
@@ -53,13 +53,13 @@ variable "client_spot_hourly_price" {
 variable "count_workers" {
   description = "Number of workers to launch."
   type        = string
-  default     = 0
+  default     = 1
 }
 
 variable "count_workers_spot" {
   description = "Number of workers on spot instances to launch."
   type        = string
-  default     = 0
+  default     = 5
 }
 
 variable "worker_spot_hourly_price" {
@@ -93,10 +93,10 @@ variable "worker_heap_size" {
 }
 
 variable "extra_worker_configs" {
-  type = string
+  type    = string
   default = <<EOF
-task.max-partial-aggregation-memory=64MB
-node-scheduler.max-splits-per-node=1000
+#task.max-partial-aggregation-memory=64MB
+#node-scheduler.max-splits-per-node=1000
 EOF
 }
 
