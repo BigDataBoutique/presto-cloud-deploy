@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 set -e
 
-# Based on the official Presto installation instructions found at https://prestodb.io/docs/current/installation/deployment.html
-# Using code taken from https://github.com/joyent/terraform-triton-presto/blob/master/packer/scripts/install_presto.sh
-
 log() {
   echo "==> $(basename ${0}): ${1}"
 }
@@ -16,13 +13,13 @@ export user_presto='presto'
 
 log "Downloading Presto ${version_presto}..."
 
-wget -q -O ${path_file} "https://repo1.maven.org/maven2/io/prestosql/presto-server/${version_presto}/presto-server-${version_presto}.tar.gz"
+wget -q -O "${path_file}" "https://repo1.maven.org/maven2/io/prestosql/presto-server/${version_presto}/presto-server-${version_presto}.tar.gz"
 
 log "Installing Presto ${version_presto}..."
 useradd ${user_presto} || log "User [${user_presto}] already exists. Continuing..."
 
-install -d -o ${user_presto} -g ${user_presto} ${path_install}
-tar -xzf ${path_file} -C /usr/local/
+install -d -o ${user_presto} -g ${user_presto} "${path_install}"
+tar -xzf "${path_file}" -C /usr/local/
 install -d -o ${user_presto} -g ${user_presto} /etc/presto/
 install -d -o ${user_presto} -g ${user_presto} /etc/presto/catalog
 install -d -o ${user_presto} -g ${user_presto} /var/lib/presto/ # this is the data dir
@@ -48,7 +45,7 @@ log "Installing the Presto service"
 /usr/bin/printf "
 [Unit]
 Description=Presto Server
-Documentation=https://prestodb.io/docs/current/index.html
+Documentation=https://trino.io/docs/current/index.html
 After=network-online.target
 [Service]
 User=${user_presto}
@@ -65,4 +62,4 @@ WantedBy=default.target
 
 systemctl daemon-reload
 
-rm ${path_file}
+rm "${path_file}"

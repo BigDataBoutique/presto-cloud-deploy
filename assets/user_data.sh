@@ -3,7 +3,6 @@ set -ex
 
 exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 
-
 cat <<'EOF' >/etc/security/limits.d/100-presto-nofile.conf
 presto soft nofile 16384
 presto hard nofile 16384
@@ -89,8 +88,6 @@ function setup_hive_metastore {
   service hive-metastore start
   systemctl enable hive-metastore
 }
-
-/usr/bin/printf "connector.name=tpcds" > /etc/presto/catalog/tpcds.properties
 
 #
 # Configure as COORDINATOR
@@ -216,19 +213,17 @@ if [[ "${mode_presto}" == "coordinator" ]] || [[ "${mode_presto}" == "coordinato
     echo "Presto Coordinator is now online"
 fi
 
-
-
 %{ for script in additional_bootstrap_scripts ~}
   %{ if script.type == "s3" ~}
     if [ ! -z "${aws_access_key_id}" ]; then
       export AWS_ACCESS_KEY_ID=${aws_access_key_id}
       export AWS_SECRET_ACCESS_KEY=${aws_secret_access_key}
     fi
-    aws s3 cp ${script.script_url} /tmp/${script.script_name}
+    aws s3 cp "${script.script_url}" "/tmp/${script.script_name}"
   %{ else ~}
-    curl ${script.script_url} -o /tmp/${script.script_name}
+    curl "${script.script_url}" -o "/tmp/${script.script_name}"
   %{ endif ~}
-  chmod +x /tmp/${script.script_name} 
+  chmod +x "/tmp/${script.script_name}"
   sh -c "/tmp/${script.script_name} %{ for param in script.params ~} ${param} %{ endfor ~}"
 %{ endfor ~}
 
