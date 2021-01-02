@@ -23,7 +23,7 @@ resource "aws_launch_configuration" "coordinator" {
   name_prefix                 = "presto-${var.environment_name}-coordinator"
   image_id                    = data.aws_ami.presto.id
   instance_type               = var.coordinator_instance_type
-  security_groups             = [aws_security_group.presto.id]
+  security_groups             = concat([aws_security_group.presto.id], var.additional_security_groups)
   iam_instance_profile        = aws_iam_instance_profile.presto.id
   associate_public_ip_address = var.public_facing
   user_data                   = data.template_file.coordinator-userdata-script.rendered

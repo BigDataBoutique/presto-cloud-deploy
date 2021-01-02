@@ -1,5 +1,5 @@
 {
-  "presto_version": "350",
+  "presto_version": "348",
   "hive_version": "2.3.7",
   "hadoop_version": "2.10.1",
   "redash_version": "7.0.0",
