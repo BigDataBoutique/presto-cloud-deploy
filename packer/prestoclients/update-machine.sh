@@ -26,7 +26,7 @@ cd /opt/certs
 openssl genrsa -des3 -passout pass:xxxx -out keypair 2048
 openssl rsa -passin pass:xxxx -in keypair -out server.key
 rm keypair
-touch /home/ubuntu/.rnd
+touch ~/.rnd
 openssl req -new -key server.key -out server.csr -subj "/CN=*"
 openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
 rm server.csr
