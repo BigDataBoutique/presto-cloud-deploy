@@ -1,6 +1,6 @@
 {
-  "presto_version": "348",
-  "hive_version": "2.3.7",
+  "presto_version": "359",
+  "hive_version": "2.3.8",
   "hadoop_version": "2.10.1",
   "redash_version": "7.0.0",
 

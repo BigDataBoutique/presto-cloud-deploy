@@ -88,13 +88,13 @@
     },
     {
       "type": "shell",
-      "script": "presto/install-presto.sh",
+      "script": "presto/install-trino.sh",
       "environment_vars": [ "PRESTO_VERSION={{user `presto_version`}}" ],
       "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
     },
     {
       "type": "shell",
-      "script": "presto/install-presto-cli.sh",
+      "script": "presto/install-trino-cli.sh",
       "environment_vars": [ "PRESTO_VERSION={{user `presto_version`}}" ],
       "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
     }
