@@ -3,16 +3,16 @@ set -ex
 
 exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 
-cat <<'EOF' >/etc/security/limits.d/100-presto-nofile.conf
-presto soft nofile 16384
-presto hard nofile 16384
+cat <<'EOF' >/etc/security/limits.d/100-trino-nofile.conf
+trino soft nofile 16384
+trino hard nofile 16384
 EOF
 
 /usr/bin/printf "
 node.environment=${environment_name}
 node.id=$(hostname)
-node.data-dir=/var/lib/presto/
-" > /etc/presto/node.properties
+node.data-dir=/var/lib/trino/
+" > /etc/trino/node.properties
 
 /usr/bin/printf "-server
 -Xmx${heap_size}G
@@ -27,7 +27,7 @@ node.data-dir=/var/lib/presto/
 -Djdk.attach.allowAttachSelf=true
 -Djdk.nio.maxCachedBufferSize=2000000
 -Duser.timezone=UTC
-" > /etc/presto/jvm.config
+" > /etc/trino/jvm.config
 
 function setup_hive_metastore {
   AV_ZONE="$(ec2metadata --availability-zone)"
@@ -111,7 +111,7 @@ http-server.http.port=${http_port}
 query.max-memory=${query_max_memory}GB
 # query.max-total-memory defaults to query.max-memory * 2 so we are good
 ${extra_worker_configs}
-" > /etc/presto/config.properties
+" > /etc/trino/config.properties
 
   setup_hive_metastore
 fi
@@ -137,7 +137,7 @@ http-server.http.port=${http_port}
 query.max-memory=${query_max_memory}GB
 # query.max-total-memory defaults to query.max-memory * 2 so we are good
 ${extra_worker_configs}
-" > /etc/presto/config.properties
+" > /etc/trino/config.properties
 fi
 
 #
@@ -162,7 +162,7 @@ http-server.http.port=${http_port}
 query.max-memory=${query_max_memory}GB
 # query.max-total-memory defaults to query.max-memory * 2 so we are good
 ${extra_worker_configs}
-" > /etc/presto/config.properties
+" > /etc/trino/config.properties
 
   setup_hive_metastore
 fi
@@ -193,17 +193,17 @@ if [ ! -z "${aws_access_key_id}" ] && [ ! -z "${aws_secret_access_key}" ]; then
   rm /tmp/hive-site-partial.txt
 
   # Update hive.properties
-  /usr/bin/printf "\nhive.allow-drop-table=true" >> /etc/presto/catalog/hive.properties
-  /usr/bin/printf "\nhive.non-managed-table-writes-enabled=true" >> /etc/presto/catalog/hive.properties
-  /usr/bin/printf "\n#hive.time-zone=UTC" >> /etc/presto/catalog/hive.properties
-  /usr/bin/printf "\nhive.s3.aws-access-key=${aws_access_key_id}" >> /etc/presto/catalog/hive.properties
-  /usr/bin/printf "\nhive.s3.aws-secret-key=${aws_secret_access_key}" >> /etc/presto/catalog/hive.properties
-  /usr/bin/printf "\n" >> /etc/presto/catalog/hive.properties
+  /usr/bin/printf "\nhive.allow-drop-table=true" >> /etc/trino/catalog/hive.properties
+  /usr/bin/printf "\nhive.non-managed-table-writes-enabled=true" >> /etc/trino/catalog/hive.properties
+  /usr/bin/printf "\n#hive.time-zone=UTC" >> /etc/trino/catalog/hive.properties
+  /usr/bin/printf "\nhive.s3.aws-access-key=${aws_access_key_id}" >> /etc/trino/catalog/hive.properties
+  /usr/bin/printf "\nhive.s3.aws-secret-key=${aws_secret_access_key}" >> /etc/trino/catalog/hive.properties
+  /usr/bin/printf "\n" >> /etc/trino/catalog/hive.properties
 fi
 
 echo "Starting presto..."
-systemctl enable presto.service
-systemctl start presto.service
+systemctl enable trino.service
+systemctl start trino.service
 
 if [[ "${mode_presto}" == "coordinator" ]] || [[ "${mode_presto}" == "coordinator-worker" ]]; then
     echo "Waiting for Presto Coordinator to start"
@@ -231,4 +231,4 @@ echo "Executing additional bootstrap scripts"
 
 echo "Restarting Presto service"
 
-systemctl restart presto
+systemctl restart trino

@@ -40,7 +40,7 @@ resource "aws_autoscaling_group" "coordinator" {
   max_size             = "1"
   desired_capacity     = "1"
   launch_configuration = aws_launch_configuration.coordinator.id
-  availability_zones = [aws_ebs_volume.coordinator.availability_zone]
+  vpc_zone_identifier = [data.aws_subnet.main_subnet.id]
 
   load_balancers = [aws_elb.coordinator-lb.id]
 
