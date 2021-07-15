@@ -47,7 +47,7 @@ resource "aws_iam_role_policy" "presto-service-policy" {
         "Effect": "Allow",
         "Action": [
             "glue:CreatePartition",
-            "glue:BatchCreatePartition
+            "glue:BatchCreatePartition",
             "glue:CreateTable",
             "glue:DeleteTable",
             "glue:BatchDeleteTable",
