@@ -19,6 +19,11 @@ variable "volume_encryption" {
 variable "environment_name" {
   description = "The name of the Presto cluster (aka environment)."
   type        = string
+  validation {
+    condition     =  can(regex("^[0-9A-Za-z]+$", var.environment_name))
+    error_message = "Trino environment name can only contain alphanumerics."
+  }
+
 }
 
 variable "http_port" {

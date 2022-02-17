@@ -82,7 +82,7 @@ resource "aws_security_group" "presto-clients" {
 }
 
 resource "aws_security_group" "presto" {
-  name        = "presto-${var.environment_name}-clients-security-group"
+  name        = "presto-${var.environment_name}-security-group"
   description = "Presto access"
   vpc_id      = data.aws_subnet.main_subnet.vpc_id
 
@@ -134,4 +134,3 @@ resource "aws_security_group" "presto" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
-
