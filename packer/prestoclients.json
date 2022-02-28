@@ -50,6 +50,11 @@
         "destination": "/tmp/zeppelin-interpreter-partial.json"
       },
       {
+        "type": "file",
+        "source": "../assets/zeppelin-jdbc-0.11.0-SNAPSHOT.jar",
+        "destination": "/tmp/zeppelin-jdbc-0.11.0-SNAPSHOT.jar"
+      },
+      {
         "type": "shell",
         "script": "prestoclients/update-machine.sh",
         "execute_command": "echo '' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
@@ -72,4 +77,3 @@
       }
     ]
   }
-  

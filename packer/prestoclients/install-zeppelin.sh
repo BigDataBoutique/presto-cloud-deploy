@@ -1,13 +1,15 @@
 cd /tmp
-wget --no-verbose https://www-eu.apache.org/dist/zeppelin/zeppelin-0.8.2/zeppelin-0.8.2-bin-all.tgz
+wget --no-verbose https://www-eu.apache.org/dist/zeppelin/zeppelin-0.10.0/zeppelin-0.10.0-bin-all.tgz
 sudo tar xf zeppelin-*-bin-all.tgz -C /opt
-rm zeppelin-0.8.2-bin-all.tgz
+rm zeppelin-0.11.0-bin-all.tgz
 sudo mv /opt/zeppelin-*-bin-all /opt/zeppelin
 sudo cp zeppelin-interpreter-partial.json /opt/zeppelin/conf/zeppelin-interpreter-partial.json
 
-# avoiding issues on >=0.180 versions of presto-jdbc
-# https://groups.google.com/forum/#!topic/presto-users/koT1Yv3sKG4
-sudo wget --no-verbose https://repo1.maven.org/maven2/com/facebook/presto/presto-jdbc/0.170/presto-jdbc-0.170.jar -P /opt/zeppelin/interpreter/jdbc
+sudo cp zeppelin-jdbc-0.11.0-SNAPSHOT.jar /opt/zeppelin/interpreter/jdbc/zeppelin-jdbc-0.10.0.jar
+# trino support for 358 and above
+# https://issues.apache.org/jira/browse/ZEPPELIN-5551
+sudo wget --no-verbose https://repo1.maven.org/maven2/io/trino/trino-jdbc/370/trino-jdbc-370.jar -P /opt/zeppelin/interpreter/jdbc
+
 
 sudo useradd -d /opt/zeppelin -s /bin/false zeppelin
 
