@@ -23,10 +23,11 @@ pip install -r /tmp/incubator-superset/requirements.txt \
             -r /tmp/incubator-superset/contrib/docker/requirements-extra.txt
 
 # See https://github.com/apache/incubator-superset/issues/6770
-pip install pandas==0.23.4
+# now supported https://github.com/apache/superset/issues/6767
+#pip install pandas==0.23.4
 
-# See https://github.com/apache/incubator-superset/issues/6977
-pip install sqlalchemy==1.2.18
+# See https://superset.apache.org/docs/databases/installing-database-drivers/
+pip install sqlalchemy-trino
 
 pip install superset gevent
 
@@ -34,12 +35,12 @@ rm -rf /tmp/incubator-superset
 
 cat <<'EOF' >$SUPERSET_CONFIG_PATH/presto-datasource.yaml
 databases:
-- database_name: presto
+- database_name: trino
   expose_in_sqllab: true
   extra: "{\r\n    \"metadata_params\": {},\r\n    \"engine_params\": {},\r\n    \"\
     metadata_cache_timeout\": {},\r\n    \"schemas_allowed_for_csv_upload\": []\r\n\
     }\r\n"
-  sqlalchemy_uri: presto://PRESTO_COORDINATOR_HOST
+  sqlalchemy_uri: trino://PRESTO_COORDINATOR_HOST
   tables: []
 EOF
 

@@ -10,7 +10,7 @@
         },
         "default.driver": {
             "name": "default.driver",
-            "value": "com.facebook.presto.jdbc.PrestoDriver",
+            "value": "io.trino.jdbc.TrinoDriver",
             "type": "string"
         },
         "default.user": {
@@ -34,7 +34,7 @@
     ],
     "dependencies": [
         {
-            "groupArtifactVersion": "/opt/zeppelin/interpreter/jdbc/presto-jdbc-0.170.jar",
+            "groupArtifactVersion": "/opt/zeppelin/interpreter/jdbc/trino-jdbc-370.jar",
             "local": false
         }
     ],
