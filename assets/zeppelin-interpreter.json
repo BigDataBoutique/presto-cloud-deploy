@@ -5,7 +5,7 @@
     "properties": {
         "default.url": {
             "name": "default.url",
-            "value": "jdbc:presto://PRESTO_HOST/hive/default",
+            "value": "jdbc:trino://PRESTO_HOST",
             "type": "string"
         },
         "default.driver": {
