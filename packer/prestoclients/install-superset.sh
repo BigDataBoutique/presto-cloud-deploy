@@ -1,8 +1,8 @@
 SUPERSET_CONFIG_PATH="/opt/superset/config"
 
-sudo mkdir -p $SUPERSET_CONFIG_PATH
-
 git clone https://github.com/apache/superset.git /opt/superset
+
+sudo mkdir -p $SUPERSET_CONFIG_PATH
 
 cat <<'EOF' >$SUPERSET_CONFIG_PATH/presto-datasource.yaml
 databases:
@@ -22,4 +22,3 @@ EOF
 
 cd /opt/superset
 docker-compose -f docker-compose-non-dev.yml pull
-docker-compose -f docker-compose-non-dev.yml up -d

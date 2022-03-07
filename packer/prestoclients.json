@@ -6,7 +6,7 @@
         "ami_name": "prestoclients-{{isotime | clean_resource_name}}",
         "availability_zone": "{{user `aws_az`}}",
         "iam_instance_profile": "packer",
-        "instance_type": "t2.small",
+        "instance_type": "t2.medium",
         "region": "{{user `aws_region`}}",
         "run_tags": {
           "role": "packer"
