@@ -11,12 +11,13 @@ cat <<'EOF' >/opt/certs/server.key
 ${key_pem}
 EOF
 
-### Redash 
+### Redash
 
 export COMPOSE_INTERACTIVE_NO_CLI=1
 cd /opt/redash
+
 sudo -E docker-compose exec -T server ./manage.py users create_root admin@redash admin --password "${admin_password}"
-sudo -E docker-compose exec -T server ./manage.py ds new presto --type presto --options '{"host": "${presto_coordinator_host}", "username": "admin"}'
+sudo -E docker-compose exec -T server ./manage.py ds new trino --type trino --options '{"host": "${presto_coordinator_host}", "username": "admin"}'
 
 # Redash OAuth setup
 # See https://redash.io/help/open-source/admin-guide/google-developer-account-setup
@@ -65,18 +66,37 @@ sudo chown zeppelin:zeppelin /opt/zeppelin/conf -R
 sudo service zeppelin restart
 
 ### Apache Superset
-. /etc/environment
-. /opt/superset/venv/bin/activate
-
-superset db upgrade
-export FLASK_APP=superset
-flask fab create-admin --username admin --password ${admin_password} --firstname "" --lastname "" --email ""
-superset init
 
 # Create presto datasource
 sudo sed -i -E "s/PRESTO_COORDINATOR_HOST/${presto_coordinator_host}/g" /opt/superset/config/presto-datasource.yaml
-superset import_datasources -p /opt/superset/config/presto-datasource.yaml
+sudo sed -ie '/^x-superset-volumes/a \
+\ \ - /opt/superset/config/presto-datasource.yaml:/tmp/presto-datasource.yaml\
+'  /opt/superset/docker-compose-non-dev.yml
+
+#superset import datasources and gunicorn - not yet active
+cd /opt/superset
+sudo docker-compose -f docker-compose-non-dev.yml up -d
+# sudo docker exec -it superset_app superset import-datasources -p /tmp/presto-datasource.yaml
 sudo rm /opt/superset/config/presto-datasource.yaml
+
+
+
+# SUPERSET_VENV_PATH="/opt/superset/venv"
+# apt-get install python3-venv
+# python3 -m venv $SUPERSET_VENV_PATH
+# . $SUPERSET_VENV_PATH/bin/activate
+#
+# pip install --upgrade setuptools pip
+# pip install gevent
+# nohup gunicorn -w 10 \
+#       -k gevent \
+#       --timeout 120 \
+#       -b  localhost:6000 \
+#       --limit-request-line 0 \
+#       --limit-request-field_size 0 \
+#       --forwarded-allow-ips="*" \
+#       superset:app &
+
 
 # Presto OAuth setup
 # See https://superset.incubator.apache.org/faq.html?highlight=oauth#how-can-i-configure-oauth-authentication-and-authorization
@@ -130,13 +150,6 @@ sudo rm /opt/superset/config/presto-datasource.yaml
 #]
 #EOF
 
-nohup gunicorn -w 10 \
-      -k gevent \
-      --timeout 120 \
-      -b  localhost:6000 \
-      --limit-request-line 0 \
-      --limit-request-field_size 0 \
-      --forwarded-allow-ips="*" \
-      superset:app &
+
 
 sudo systemctl restart nginx.service
