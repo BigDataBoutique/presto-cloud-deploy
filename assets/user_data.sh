@@ -199,6 +199,9 @@ if [ ! -z "${aws_access_key_id}" ] && [ ! -z "${aws_secret_access_key}" ]; then
   /usr/bin/printf "\nhive.s3.aws-access-key=${aws_access_key_id}" >> /etc/trino/catalog/hive.properties
   /usr/bin/printf "\nhive.s3.aws-secret-key=${aws_secret_access_key}" >> /etc/trino/catalog/hive.properties
   /usr/bin/printf "\n" >> /etc/trino/catalog/hive.properties
+  /usr/bin/printf "\nhive.s3.aws-access-key=${aws_access_key_id}" >> /etc/trino/catalog/iceberg.properties
+  /usr/bin/printf "\nhive.s3.aws-secret-key=${aws_secret_access_key}" >> /etc/trino/catalog/iceberg.properties
+  /usr/bin/printf "\n" >> /etc/trino/catalog/iceberg.properties
 fi
 
 echo "Starting presto..."
