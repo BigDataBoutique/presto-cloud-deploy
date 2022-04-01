@@ -106,7 +106,8 @@ EOF
 }
 
 variable "public_facing" {
-  default = "false"
+  type = bool
+  default = false
 }
 
 variable "s3_buckets" {

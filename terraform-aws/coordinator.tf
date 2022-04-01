@@ -72,7 +72,7 @@ resource "aws_elb" "coordinator-lb" {
     var.additional_security_groups,
   )
   subnets  = [for s in data.aws_subnet.subnets : s.id]
-  internal = var.public_facing == "true" ? "false" : "true"
+  internal = !var.public_facing
 
   cross_zone_load_balancing = false
   idle_timeout              = 400
