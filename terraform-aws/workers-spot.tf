@@ -4,7 +4,7 @@ resource "aws_launch_configuration" "workers-spot" {
   instance_type               = var.worker_instance_type
   security_groups             = [aws_security_group.trino.id]
   iam_instance_profile        = aws_iam_instance_profile.trino.id
-  associate_public_ip_address = false
+  associate_public_ip_address = var.public_facing
   user_data                   = data.template_file.worker-userdata-script.rendered
   key_name                    = var.key_name
   spot_price                  = var.worker_spot_hourly_price
