@@ -1,5 +1,5 @@
-resource "aws_iam_role" "presto-service-role" {
-  name_prefix = "presto-service-role"
+resource "aws_iam_role" "trino-service-role" {
+  name_prefix = "trino-service-role"
 
   assume_role_policy = <<EOF
 {
@@ -18,9 +18,9 @@ EOF
 
 }
 
-resource "aws_iam_role_policy" "presto-service-policy" {
-  name_prefix = "presto-service-policy"
-  role        = aws_iam_role.presto-service-role.id
+resource "aws_iam_role_policy" "trino-service-policy" {
+  name_prefix = "trino-service-policy"
+  role        = aws_iam_role.trino-service-role.id
 
   policy = <<EOF
 {
@@ -73,8 +73,8 @@ EOF
 
 }
 
-resource "aws_iam_instance_profile" "presto" {
-  name_prefix = "presto-${var.environment_name}-ip"
+resource "aws_iam_instance_profile" "trino" {
+  name_prefix = "trino-${var.environment_name}-ip"
   path        = "/"
-  role        = aws_iam_role.presto-service-role.name
+  role        = aws_iam_role.trino-service-role.name
 }

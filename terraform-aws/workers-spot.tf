@@ -1,9 +1,9 @@
 resource "aws_launch_configuration" "workers-spot" {
-  name_prefix                 = "presto-${var.environment_name}-worker-spot"
-  image_id                    = data.aws_ami.presto.id
+  name_prefix                 = "trino-${var.environment_name}-worker-spot"
+  image_id                    = data.aws_ami.trino.id
   instance_type               = var.worker_instance_type
-  security_groups             = [aws_security_group.presto.id]
-  iam_instance_profile        = aws_iam_instance_profile.presto.id
+  security_groups             = [aws_security_group.trino.id]
+  iam_instance_profile        = aws_iam_instance_profile.trino.id
   associate_public_ip_address = false
   user_data                   = data.template_file.worker-userdata-script.rendered
   key_name                    = var.key_name
@@ -15,7 +15,7 @@ resource "aws_launch_configuration" "workers-spot" {
 }
 
 resource "aws_autoscaling_group" "workers-spot" {
-  name_prefix          = "presto-${var.environment_name}-worker-spot"
+  name_prefix          = "trino-${var.environment_name}-worker-spot"
   min_size             = "0"
   max_size             = "999"
   desired_capacity     = var.count_workers_spot
@@ -24,7 +24,7 @@ resource "aws_autoscaling_group" "workers-spot" {
 
   tag {
     key                 = "Name"
-    value               = format("presto-%s-worker-spot", var.environment_name)
+    value               = format("trino-%s-worker-spot", var.environment_name)
     propagate_at_launch = true
   }
   tag {

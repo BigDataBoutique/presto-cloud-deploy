@@ -4,15 +4,13 @@ data "template_file" "coordinator-userdata-script" {
     environment_name                = var.environment_name
     aws_region                      = var.aws_region
     http_port                       = var.http_port
-    mode_presto                     = var.count_workers == "0" && var.count_workers_spot == "0" ? "coordinator-worker" : "coordinator"
+    mode_trino                     = var.count_workers == "0" && var.count_workers_spot == "0" ? "coordinator-worker" : "coordinator"
     heap_size                       = var.coordinator_heap_size
     query_max_memory_per_node       = ceil(var.worker_heap_size * 0.4)
     query_max_total_memory_per_node = ceil(var.worker_heap_size * 0.6)
     query_max_memory                = var.query_max_memory
-    security_groups                 = aws_security_group.presto.id
-    aws_access_key_id               = var.aws_access_key_id
-    aws_secret_access_key           = var.aws_secret_access_key
-    address_presto_coordinator      = ""
+    security_groups                 = aws_security_group.trino.id
+    address_trino_coordinator      = ""
     extra_worker_configs            = var.extra_worker_configs
     additional_bootstrap_scripts    = var.additional_bootstrap_scripts
 
@@ -20,22 +18,22 @@ data "template_file" "coordinator-userdata-script" {
 }
 
 resource "aws_launch_configuration" "coordinator" {
-  name_prefix                 = "presto-${var.environment_name}-coordinator"
-  image_id                    = data.aws_ami.presto.id
+  name_prefix                 = "trino-${var.environment_name}-coordinator"
+  image_id                    = data.aws_ami.trino.id
   instance_type               = var.coordinator_instance_type
-  security_groups             = concat([aws_security_group.presto.id], var.additional_security_groups)
-  iam_instance_profile        = aws_iam_instance_profile.presto.id
+  security_groups             = concat([aws_security_group.trino.id], var.additional_security_groups)
+  iam_instance_profile        = aws_iam_instance_profile.trino.id
   associate_public_ip_address = var.public_facing
   user_data                   = data.template_file.coordinator-userdata-script.rendered
   key_name                    = var.key_name
-  
+
   lifecycle {
     create_before_destroy = true
   }
 }
 
 resource "aws_autoscaling_group" "coordinator" {
-  name                 = "presto-${var.environment_name}-coordinator"
+  name                 = "trino-${var.environment_name}-coordinator"
   min_size             = "0"
   max_size             = "1"
   desired_capacity     = "1"
@@ -46,7 +44,7 @@ resource "aws_autoscaling_group" "coordinator" {
 
   tag {
     key                 = "Name"
-    value               = format("presto-%s-coordinator", var.environment_name)
+    value               = format("trino-%s-coordinator", var.environment_name)
     propagate_at_launch = true
   }
   tag {
@@ -66,9 +64,9 @@ resource "aws_autoscaling_group" "coordinator" {
 }
 
 resource "aws_elb" "coordinator-lb" {
-  name = format("%s-presto-lb", var.environment_name)
+  name = format("%s-trino-lb", var.environment_name)
   security_groups = concat(
-    [aws_security_group.presto.id],
+    [aws_security_group.trino.id],
     var.additional_security_groups,
   )
   subnets  = [for s in data.aws_subnet.subnets : s.id]
@@ -93,7 +91,7 @@ resource "aws_elb" "coordinator-lb" {
   }
 
   tags = {
-    Name = format("%s-presto-lb", var.environment_name)
+    Name = format("%s-trino-lb", var.environment_name)
   }
 }
 

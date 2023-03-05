@@ -3,27 +3,27 @@
 ## Create the AMIs with Packer
 
 Go to the packer folder and see the README there. Once you have the generated an
-AMI for the presto instance and the prestoclient instance, return here and
+AMI for the trino instance and the trinoclient instance, return here and
 continue with the next steps.
 
 ## Create key-pair
 
 ```bash
-aws ec2 create-key-pair --key-name presto --query 'KeyMaterial' --output text > presto.pem
+aws ec2 create-key-pair --key-name trino --query 'KeyMaterial' --output text > trino.pem
 ```
 
 ## VPC
 
-The Presto cluster is going to be deployed in a single subnet, within a single VPC, in a single availability zone. The idea behind this decision is to reduce latency and costs associated with transferring data between networks and AZs. Since Presto is usually used for non-mission critical parts of a system, this is usually acceptable.
+The Trino cluster is going to be deployed in a single subnet, within a single VPC, in a single availability zone. The idea behind this decision is to reduce latency and costs associated with transferring data between networks and AZs. Since Trino is usually used for non-mission critical parts of a system, this is usually acceptable.
 
-A load balancer is placed in front of the the Presto cluster and another in
-front of the Presto clients. To create a load balancer you need to associate it
+A load balancer is placed in front of the the Trino cluster and another in
+front of the Trino clients. To create a load balancer you need to associate it
 with two subnets of the same VPC in distinct availability zones, even if one of
 the availability zones is never used.
 
 Create a VPC or use an existing one. Make a list of least two subnet IDs in
 distinct availability zones. The first subnet in the list will be used to deploy
-the Presto cluster and related resources. The subsequent subnets will be used to
+the Trino cluster and related resources. The subsequent subnets will be used to
 configure the load balancer.
 
 ## Configurations
@@ -35,14 +35,14 @@ The most important variables specified in `variables.tf` are the following:
 * `subnet_ids` - the IDs of the VPC to launch the cluster in, as described above.
 * `public_facing` - whether or not the coordinator node should be open to the internet. The default and the highly recommended value is `false`.
 * `additional_security_groups` - here you add IDs for security groups you want to add to the coordinator load balancer so your clients (e.g. Redash, applications, etc) can access the coordinator for querying.
-* `count_clients` - number of client nodes with Redash and Apache Superset installed, with configured admin user and datasource pointing to the Presto cluster. Default is `0`.
+* `count_clients` - number of client nodes with Redash and Apache Superset installed, with configured admin user and datasource pointing to the Trino cluster. Default is `0`.
 * `clients_lb_subnets` - list of subnet IDs to attach to the clients load balancer. At least two subnets from different availability zones must be provided.
 
 We recommend using `tfvars` file to override all variables and configurations,
 see https://www.terraform.io/intro/getting-started/variables.html#from-a-file
 for more details.
 
-You must create at least one client to generate the credentials to access the Presto UI.
+You must create at least one client to generate the credentials to access the Trino UI.
 
 You can launch workers and spot-workers (workers which run on spot-instances).
 
@@ -84,15 +84,15 @@ clients-admin-password = [
   "********",
 ]
 clients-lb-dns = [
-  "example-presto-client-lb-1234567890.eu-west-1.elb.amazonaws.com",
+  "example-trino-client-lb-1234567890.eu-west-1.elb.amazonaws.com",
 ]
 coordinator-lb-dns = [
-  "example-presto-lb-1234567890.eu-west-1.elb.amazonaws.com",
+  "example-trino-lb-1234567890.eu-west-1.elb.amazonaws.com",
 ]
 ```
 
-Note `coordinator-lb-dns` - that's your entry point to the Presto cluster. All
-queries should go to that URL, and the Presto UI accessible at that address as
+Note `coordinator-lb-dns` - that's your entry point to the Trino cluster. All
+queries should go to that URL, and the Trino UI accessible at that address as
 well (port 8080).
 
 To enter the UI you pass the `clients-admin-password` as the user name and don't
@@ -110,5 +110,5 @@ aws ec2 describe-instances --filters Name=instance-state-name,Values=running,Nam
 To login to one of the instances:
 
 ```bash
-ssh -i presto.pem ubuntu@{public IP / DNS of the instance}
+ssh -i trino.pem ubuntu@{public IP / DNS of the instance}
 ```

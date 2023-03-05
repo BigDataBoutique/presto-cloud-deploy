@@ -1,21 +1,22 @@
 #!/usr/bin/env bash
-set -ex
+set -eux
 
 log() {
   echo "==> $(basename ${0}): ${1}"
 }
 
-export version_trino=${PRESTO_VERSION}
+export DEBIAN_FRONTEND=noninteractive
+export version_trino=${TRINO_VERSION}
 export path_install="/usr/local/trino-server-${version_trino}"
 export path_file="trino-server-${version_trino}.tar.gz"
 export pid_file="/var/run/trino/trino.pid"
 export user_trino='trino'
 
-log "Downloading Presto ${version_trino}..."
+log "Downloading Trino ${version_trino}..."
 
 wget -q -O "${path_file}" "https://repo1.maven.org/maven2/io/trino/trino-server/${version_trino}/trino-server-${version_trino}.tar.gz"
 
-log "Installing Presto / Trino ${version_trino}..."
+log "Installing Trino ${version_trino}..."
 useradd ${user_trino} || log "User [${user_trino}] already exists. Continuing..."
 
 install -d -o ${user_trino} -g ${user_trino} "${path_install}"
@@ -24,8 +25,8 @@ install -d -o ${user_trino} -g ${user_trino} /etc/trino/
 install -d -o ${user_trino} -g ${user_trino} /etc/trino/catalog
 install -d -o ${user_trino} -g ${user_trino} /var/lib/trino/ # this is the data dir
 install -d -o ${user_trino} -g ${user_trino} /var/log/trino/
-mv ./presto-catalogs/* /etc/trino/catalog/
-rm -rf ./presto-catalogs
+mv ./trino-catalogs/* /etc/trino/catalog/
+rm -rf ./trino-catalogs
 rm -rf "$path_install/etc"
 ln -s /etc/trino/ "$path_install/etc"
 
@@ -48,10 +49,10 @@ WantedBy=default.target
 " >> /etc/default/trino
 chown ${user_trino}:${user_trino} /etc/default/trino
 
-log "Installing the Presto service"
+log "Installing the Trino service"
 /usr/bin/printf "
 [Unit]
-Description=Presto Server
+Description=Trino Server
 Documentation=https://trino.io/docs/current/index.html
 After=network-online.target
 [Service]
@@ -60,6 +61,7 @@ Restart=on-failure
 Type=forking
 PIDFile=${pid_file}
 RuntimeDirectory=trino
+LimitNOFILE=131072
 EnvironmentFile=/etc/default/trino
 ExecStart=${path_install}/bin/launcher start \$TRINO_OPTS
 ExecStop=${path_install}/bin/launcher stop \$TRINO_OPTS
